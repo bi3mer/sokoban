@@ -13,5 +13,6 @@ An example of the `[[level-file]]` on mac/linux is `levels/level-0.txt`.
 
 ## Coding
 
-- [Sokban Part 1: Bitboards](https://youtu.be/1qzPr5OpPOE?si=1ijM4O0X8vE1O1u7)
+- [Sokoban Part 1: Bitboards](https://youtu.be/1qzPr5OpPOE?si=1ijM4O0X8vE1O1u7)
 - [Sokoban Part 2: ncurses](https://youtu.be/PHkmcQtTuxU?si=LB8c5zvodZrtva98)
+- [Sokoban Part 3: Organization](https://www.youtube.com/watch?v=ZO7vgxL8Zqo)
