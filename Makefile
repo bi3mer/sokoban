@@ -1,2 +1,2 @@
 build:
-	g++ main.cpp -lncurses
+	g++ -I/src/ src/*.cpp -lncurses -o sokoban

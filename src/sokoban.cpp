@@ -1,0 +1,106 @@
+#include "sokoban.hpp"
+#include <iostream>
+
+void state_init_from_level(Sokoban& state, const std::vector<std::string>& level) {
+    state.rows = level.size();
+    state.columns = level[0].size();
+
+    const std::size_t num_bytes = (state.rows * state.columns + 7) / 8;
+
+    state.blocks = (unsigned char*) malloc(num_bytes);
+    memset(state.blocks, 0, num_bytes);
+
+    state.solids = (unsigned char*) malloc(num_bytes);
+    memset(state.solids, 0, num_bytes);
+
+    state.switches = (unsigned char*) malloc(num_bytes);
+    memset(state.switches, 0, num_bytes);
+
+    Point p;
+    for (p.y = 0; p.y < state.rows; ++p.y) {
+        const std::string& row = level[p.y];
+
+        for (p.x = 0; p.x < state.columns; ++p.x) {
+            switch (row[p.x]) {
+                case ' ':
+                    break;
+                case 'X':
+                    state_set_solid(state, p);
+                    break;
+                case 'b':
+                    state_set_block(state, p);
+                    break;
+                case '.':
+                    state_set_switches(state, p);
+                    break;
+                case 'B':
+                    state_set_block(state, p);
+                    state_set_switches(state, p);
+                    break;
+                case '@':
+                    state.player = p;
+                    break;
+                default:
+                    std::cerr << "Unnknown tile type: " << row[p.x] << std::endl;
+                    assert(false);
+            }
+        }
+    }
+}
+
+bool state_game_over(const Sokoban& state) {
+    const std::size_t num_bytes = (state.rows * state.columns + 7) / 8;
+    return !memcmp(state.switches, state.blocks, num_bytes);
+}
+
+void state_update(Sokoban& state, const char user_input) {
+    Point dir;
+    switch (user_input) {
+        case 'W':
+        case 'w':
+            dir = {0, -1};
+            break;
+        case 'A':
+        case 'a':
+            dir = {-1, 0};
+            break;
+        case 'S':
+        case 's':
+            dir = {0, 1};
+            break;
+        case 'D':
+        case 'd':
+            dir = {1, 0};
+            break;
+        default:
+            return;
+    }
+
+    const Point player_pos = point_add(state.player, dir);
+
+    // check the bounds
+    if (player_pos.x < 0 || player_pos.x >= state.columns) return;
+    if (player_pos.y < 0 || player_pos.y >= state.rows) return;
+
+    // check if the player is going to run into the wall
+    if (state_is_solid(state, player_pos)) return;
+
+    // handle blocks
+    if (state_is_block(state, player_pos)) {
+        const Point block_pos = point_add(player_pos, dir);
+
+        // check bounds for the block
+        if (block_pos.x < 0 || block_pos.x >= state.columns) return;
+        if (block_pos.y < 0 || block_pos.y >= state.rows) return;
+
+        // make sure spot is not a block or a solid
+        if (state_is_block(state, block_pos) || state_is_solid(state, block_pos)) return;
+
+        // update block position
+        state_set_block(state, block_pos);
+        state_clear_block(state, player_pos);
+        state.player = player_pos;
+    } else {
+        state.player = player_pos;
+    }
+}
