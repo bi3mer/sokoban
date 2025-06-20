@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "sokoban.hpp"
+#include "state.hpp"
 #include "ui.hpp"
 
 int main(int argc, char* argv[]) {
@@ -33,25 +34,40 @@ int main(int argc, char* argv[]) {
         assert(level[i].size() == num_columns);
     }
 
-    Sokoban state;
-    state_init_from_level(state, level);
+    Sokoban sokoban;
+    sokoban_init_from_level(sokoban, level);
 
     ui_init();
 
+    State state = State::Menu;
+
     // Game loop
-    ui_render_sokoban(state);
-    while (!state_game_over(state)) {
-        const char user_input = ui_get_char();
-        state_update(state, user_input);
-        ui_render_sokoban(state);
+    char user_input;
+    ui_render_menu();
+    while (!sokoban_game_over(sokoban)) {
+        user_input = ui_get_char();
+
+        switch (state) {
+            case State::Menu:
+                if (user_input == '\n') {
+                    state = State::Game;
+                    ui_render_sokoban(sokoban);
+                } else {
+                    ui_render_menu();
+                }
+                break;
+            case State::Game:
+                sokoban_update(sokoban, user_input);
+                ui_render_sokoban(sokoban);
+                break;
+        }
     }
 
     ui_close();
 
-
-    free(state.blocks);
-    free(state.solids);
-    free(state.switches);
+    free(sokoban.blocks);
+    free(sokoban.solids);
+    free(sokoban.switches);
 
     return 0;
 }

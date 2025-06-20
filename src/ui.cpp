@@ -1,9 +1,17 @@
 #include "ui.hpp"
 #include "ncurses.h"
 
+
 void ui_init() {
     initscr();
     curs_set(0); // invisible cursor
+
+    start_color();
+    init_pair('@', COLOR_WHITE, COLOR_BLACK);
+    init_pair('b', COLOR_RED, COLOR_BLACK);
+    init_pair('B', COLOR_GREEN, COLOR_BLACK);
+    init_pair('.', COLOR_RED, COLOR_BLACK);
+    init_pair('X', COLOR_WHITE, COLOR_WHITE);
 }
 
 void ui_close() {
@@ -19,6 +27,32 @@ void ui_close() {
 
 char ui_get_char() {
     return getch();
+}
+
+
+void ui_render_menu() {
+    clear();
+    move(0,0);
+
+    int max_x, max_y;
+    getmaxyx(stdscr, max_y, max_x);
+
+    move(max_y / 3, (max_x - 7) / 2);
+
+    const auto cp = COLOR_PAIR('B');
+    attron(cp);
+    printw("Sokoban");
+
+    move(max_y / 2, (max_x - 22) / 2);
+    printw("Press 'enter' to start");
+    attroff(cp);
+}
+
+inline void _ui_draw_char(const char c) {
+    const auto cp = COLOR_PAIR(c);
+    attron(cp);
+    addch(c);
+    attroff(cp);
 }
 
 void ui_render_sokoban(const Sokoban & state) {
@@ -41,19 +75,19 @@ void ui_render_sokoban(const Sokoban & state) {
             move(start_y + p.y, start_x + p.x);
 
             if (player_y && state.player.x == p.x) {
-                addch('@');
-            } else if (state_is_solid(state, p)) {
-                addch('X');
+                _ui_draw_char('@');
+            } else if (sokoban_is_solid(state, p)) {
+                _ui_draw_char('X');
             } else {
-                const bool is_block = state_is_block(state, p);
-                const bool is_switch = state_is_switch(state, p);
+                const bool is_block = sokoban_is_block(state, p);
+                const bool is_switch = sokoban_is_switch(state, p);
 
                 if (is_block && is_switch) {
-                    addch('B');
+                    _ui_draw_char('B');
                 } else if (is_block) {
-                    addch('b');
+                    _ui_draw_char('b');
                 } else if(is_switch) {
-                    addch('.');
+                    _ui_draw_char('.');
                 }
             }
 

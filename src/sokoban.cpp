@@ -1,7 +1,7 @@
 #include "sokoban.hpp"
 #include <iostream>
 
-void state_init_from_level(Sokoban& state, const std::vector<std::string>& level) {
+void sokoban_init_from_level(Sokoban& state, const std::vector<std::string>& level) {
     state.rows = level.size();
     state.columns = level[0].size();
 
@@ -25,17 +25,17 @@ void state_init_from_level(Sokoban& state, const std::vector<std::string>& level
                 case ' ':
                     break;
                 case 'X':
-                    state_set_solid(state, p);
+                    sokoban_set_solid(state, p);
                     break;
                 case 'b':
-                    state_set_block(state, p);
+                    sokoban_set_block(state, p);
                     break;
                 case '.':
-                    state_set_switches(state, p);
+                    sokoban_set_switches(state, p);
                     break;
                 case 'B':
-                    state_set_block(state, p);
-                    state_set_switches(state, p);
+                    sokoban_set_block(state, p);
+                    sokoban_set_switches(state, p);
                     break;
                 case '@':
                     state.player = p;
@@ -48,12 +48,12 @@ void state_init_from_level(Sokoban& state, const std::vector<std::string>& level
     }
 }
 
-bool state_game_over(const Sokoban& state) {
+bool sokoban_game_over(const Sokoban& state) {
     const std::size_t num_bytes = (state.rows * state.columns + 7) / 8;
     return !memcmp(state.switches, state.blocks, num_bytes);
 }
 
-void state_update(Sokoban& state, const char user_input) {
+void sokoban_update(Sokoban& state, const char user_input) {
     Point dir;
     switch (user_input) {
         case 'W':
@@ -83,10 +83,10 @@ void state_update(Sokoban& state, const char user_input) {
     if (player_pos.y < 0 || player_pos.y >= state.rows) return;
 
     // check if the player is going to run into the wall
-    if (state_is_solid(state, player_pos)) return;
+    if (sokoban_is_solid(state, player_pos)) return;
 
     // handle blocks
-    if (state_is_block(state, player_pos)) {
+    if (sokoban_is_block(state, player_pos)) {
         const Point block_pos = point_add(player_pos, dir);
 
         // check bounds for the block
@@ -94,11 +94,11 @@ void state_update(Sokoban& state, const char user_input) {
         if (block_pos.y < 0 || block_pos.y >= state.rows) return;
 
         // make sure spot is not a block or a solid
-        if (state_is_block(state, block_pos) || state_is_solid(state, block_pos)) return;
+        if (sokoban_is_block(state, block_pos) || sokoban_is_solid(state, block_pos)) return;
 
         // update block position
-        state_set_block(state, block_pos);
-        state_clear_block(state, player_pos);
+        sokoban_set_block(state, block_pos);
+        sokoban_clear_block(state, player_pos);
         state.player = player_pos;
     } else {
         state.player = player_pos;
