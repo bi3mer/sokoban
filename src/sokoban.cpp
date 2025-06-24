@@ -1,4 +1,5 @@
 #include "sokoban.hpp"
+#include <cstring>
 #include <iostream>
 
 void sokoban_init_from_level(Sokoban& state, const std::vector<std::string>& level) {
@@ -39,6 +40,7 @@ void sokoban_init_from_level(Sokoban& state, const std::vector<std::string>& lev
                     break;
                 case '@':
                     state.player = p;
+                    state.original_player = p;
                     break;
                 default:
                     std::cerr << "Unnknown tile type: " << row[p.x] << std::endl;
@@ -46,11 +48,21 @@ void sokoban_init_from_level(Sokoban& state, const std::vector<std::string>& lev
             }
         }
     }
+
+    state.original_blocks = (unsigned char*) malloc(num_bytes);
+    memcpy(state.original_blocks, state.blocks, num_bytes);
 }
 
 bool sokoban_game_over(const Sokoban& state) {
     const std::size_t num_bytes = (state.rows * state.columns + 7) / 8;
     return !memcmp(state.switches, state.blocks, num_bytes);
+}
+
+void sokoban_restart(Sokoban& state) {
+    const std::size_t num_bytes = (state.rows * state.columns + 7) / 8;
+    memcpy(state.blocks, state.original_blocks, num_bytes);
+
+    state.player = state.original_player;
 }
 
 void sokoban_update(Sokoban& state, const char user_input) {
@@ -71,6 +83,10 @@ void sokoban_update(Sokoban& state, const char user_input) {
         case 'D':
         case 'd':
             dir = {1, 0};
+            break;
+        case 'R':
+        case 'r':
+            sokoban_restart(state);
             break;
         default:
             return;
@@ -103,4 +119,11 @@ void sokoban_update(Sokoban& state, const char user_input) {
     } else {
         state.player = player_pos;
     }
+}
+
+void sokoban_free(Sokoban& state) {
+    free(state.original_blocks);
+    free(state.blocks);
+    free(state.solids);
+    free(state.switches);
 }

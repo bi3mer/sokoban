@@ -12,7 +12,9 @@ struct Sokoban {
     std::size_t rows = 0;
     std::size_t columns = 0;
     Point player = { 0, 0 };
+    Point original_player;
 
+    unsigned char* original_blocks;
     unsigned char* blocks;
     unsigned char* solids;
     unsigned char* switches;
@@ -52,4 +54,6 @@ inline bool sokoban_is_switch(const Sokoban& state, Point p) {
 
 void sokoban_init_from_level(Sokoban&, const std::vector<std::string>&);
 bool sokoban_game_over(const Sokoban&);
+void sokoban_restart(Sokoban&);
 void sokoban_update(Sokoban&, const char);
+void sokoban_free(Sokoban&);

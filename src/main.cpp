@@ -63,11 +63,9 @@ int main(int argc, char* argv[]) {
         }
     }
 
+    sokoban_free(sokoban);
     ui_close();
 
-    free(sokoban.blocks);
-    free(sokoban.solids);
-    free(sokoban.switches);
 
     return 0;
 }

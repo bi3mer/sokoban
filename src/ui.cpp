@@ -1,7 +1,6 @@
 #include "ui.hpp"
 #include "ncurses.h"
 
-
 void ui_init() {
     initscr();
     curs_set(0); // invisible cursor
@@ -28,7 +27,6 @@ void ui_close() {
 char ui_get_char() {
     return getch();
 }
-
 
 void ui_render_menu() {
     clear();
