@@ -1,9 +1,11 @@
 #include "ui.hpp"
 #include "ncurses.h"
 
+
 void ui_init() {
     initscr();
     curs_set(0); // invisible cursor
+    keypad(stdscr, TRUE);
 
     start_color();
     init_pair('@', COLOR_WHITE, COLOR_BLACK);
@@ -11,6 +13,9 @@ void ui_init() {
     init_pair('B', COLOR_GREEN, COLOR_BLACK);
     init_pair('.', COLOR_RED, COLOR_BLACK);
     init_pair('X', COLOR_WHITE, COLOR_WHITE);
+
+    init_pair(UI_HIGHLIGHTED, COLOR_BLACK, COLOR_WHITE);
+    init_pair(UI_REGULAR, COLOR_WHITE, COLOR_BLACK);
 }
 
 void ui_close() {
@@ -26,24 +31,6 @@ void ui_close() {
 
 char ui_get_char() {
     return getch();
-}
-
-void ui_render_menu() {
-    clear();
-    move(0,0);
-
-    int max_x, max_y;
-    getmaxyx(stdscr, max_y, max_x);
-
-    move(max_y / 3, (max_x - 7) / 2);
-
-    const auto cp = COLOR_PAIR('B');
-    attron(cp);
-    printw("Sokoban");
-
-    move(max_y / 2, (max_x - 22) / 2);
-    printw("Press 'enter' to start");
-    attroff(cp);
 }
 
 inline void _ui_draw_char(const char c) {

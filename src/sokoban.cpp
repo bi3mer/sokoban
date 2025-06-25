@@ -65,7 +65,7 @@ void sokoban_restart(Sokoban& state) {
     state.player = state.original_player;
 }
 
-void sokoban_update(Sokoban& state, const char user_input) {
+void sokoban_update(Sokoban& state, const int user_input) {
     Point dir;
     switch (user_input) {
         case 'W':

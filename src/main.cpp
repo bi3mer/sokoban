@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 
+#include "menu.hpp"
 #include "sokoban.hpp"
 #include "state.hpp"
 #include "ui.hpp"
@@ -34,6 +35,7 @@ int main(int argc, char* argv[]) {
         assert(level[i].size() == num_columns);
     }
 
+    Menu menu;
     Sokoban sokoban;
     sokoban_init_from_level(sokoban, level);
 
@@ -42,22 +44,28 @@ int main(int argc, char* argv[]) {
     State state = State::Menu;
 
     // Game loop
-    char user_input;
-    ui_render_menu();
+    int user_input;
+
+    menu.render();
     while (!sokoban_game_over(sokoban)) {
         user_input = ui_get_char();
 
-        switch (state) {
+        // update
+        switch(state) {
             case State::Menu:
-                if (user_input == '\n') {
-                    state = State::Game;
-                    ui_render_sokoban(sokoban);
-                } else {
-                    ui_render_menu();
-                }
+                state = menu.update(user_input);
                 break;
             case State::Game:
                 sokoban_update(sokoban, user_input);
+                break;
+        }
+
+        // render
+        switch(state) {
+            case State::Menu:
+                menu.render();
+                break;
+            case State::Game:
                 ui_render_sokoban(sokoban);
                 break;
         }
@@ -65,7 +73,6 @@ int main(int argc, char* argv[]) {
 
     sokoban_free(sokoban);
     ui_close();
-
 
     return 0;
 }
