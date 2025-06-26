@@ -3,9 +3,13 @@
 #include "state.hpp"
 #include <cstddef>
 
-struct Menu {
-    int user_selection = 0;
+#define UI_HIGHLIGHTED 1
+#define UI_REGULAR 2
 
-    State update(const int);
-    void render();
+struct Menu : State {
+    std::size_t user_selection = 0;
+    State* game;
+
+    State* update() override;
+    void render() override;
 };

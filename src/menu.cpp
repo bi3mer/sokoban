@@ -1,45 +1,55 @@
 #include "menu.hpp"
 #include "ncurses.h"
-#include "ui.hpp"
 #include <cstddef>
 #include <cstdlib>
 #include <iostream>
 
-const std::size_t MENU_SIZE = 2;
+extern bool RUNNING;
+
+const std::size_t MENU_SIZE = 3;
 const char* MENU_OPTIONS[MENU_SIZE] = {
     "Play",
-    "Instructions"
+    "Instructions",
+    "Exit",
 };
 
-State Menu::update(const int user_input) {
-    switch (user_input) {
+State* Menu::update() {
+    switch (getch()) {
         case ' ':
         case '\n':
             switch(user_selection) {
                 case 0:
-                    return State::Game;
+                    return game;
                 case 1:
                     // @TODO: put in instructions
                     break;
+                case 2:
+                    RUNNING = false;
+                    break;
                 default:
-                    ui_close();
+                    // @TODO: don't error out, just stop running
                     std::cerr << "Invalid menu selection index " << user_selection << std::endl;
-                    exit(1);
+                    RUNNING = false;
+                    break;
             }
             break;
         case 'W':
         case 'w':
-        case 3:
+        case KEY_UP:
             user_selection = (user_selection - 1) % MENU_SIZE;
             break;
         case 'S':
         case 's':
-        case 2:
+        case KEY_DOWN:
             user_selection = (user_selection + 1) % MENU_SIZE;
+            break;
+        case 'Q':
+        case 'q':
+            RUNNING = false;
             break;
     }
 
-    return State::Menu;
+    return this;
 }
 
 void Menu::render() {
@@ -49,8 +59,8 @@ void Menu::render() {
     int max_x, max_y;
     getmaxyx(stdscr, max_y, max_x);
 
-    const auto regular = COLOR_PAIR('@');
-    const auto highlighted = COLOR_PAIR('B');
+    const auto regular = COLOR_PAIR(UI_REGULAR);
+    const auto highlighted = COLOR_PAIR(UI_HIGHLIGHTED);
 
     move(max_y / 3, (max_x - 7) / 2);
     attron(regular);

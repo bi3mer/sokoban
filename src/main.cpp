@@ -2,13 +2,16 @@
 #include <cstring>
 #include <fstream>
 #include <iostream>
+#include <ncurses.h>
 #include <string>
 #include <vector>
 
+#include "game.hpp"
 #include "menu.hpp"
 #include "sokoban.hpp"
 #include "state.hpp"
-#include "ui.hpp"
+
+bool RUNNING = true;
 
 int main(int argc, char* argv[]) {
     if (argc != 2) {
@@ -35,44 +38,46 @@ int main(int argc, char* argv[]) {
         assert(level[i].size() == num_columns);
     }
 
+    /////////////////////////////////////////////////////////
+    /// Initialize ncurses
+    initscr();
+    curs_set(0); // invisible cursor
+    keypad(stdscr, TRUE);
+
+    // initialize colors
+    start_color();
+    init_pair('@', COLOR_WHITE, COLOR_BLACK);
+    init_pair('b', COLOR_RED, COLOR_BLACK);
+    init_pair('B', COLOR_GREEN, COLOR_BLACK);
+    init_pair('.', COLOR_RED, COLOR_BLACK);
+    init_pair('X', COLOR_WHITE, COLOR_WHITE);
+    init_pair(UI_REGULAR, COLOR_WHITE, COLOR_BLACK);
+    init_pair(UI_HIGHLIGHTED, COLOR_BLACK, COLOR_WHITE);
+
+    /////////////////////////////////////////////////////////
+    /// Set up state machine
     Menu menu;
-    Sokoban sokoban;
-    sokoban_init_from_level(sokoban, level);
+    Game game;
+    sokoban_init_from_level(game.state, level);
 
-    ui_init();
+    // transitions
+    menu.game = &game;
+    game.menu = &menu;
 
-    State state = State::Menu;
+    // set first state
+    State* state = &menu;
 
-    // Game loop
-    int user_input;
-
-    menu.render();
-    while (!sokoban_game_over(sokoban)) {
-        user_input = ui_get_char();
-
-        // update
-        switch(state) {
-            case State::Menu:
-                state = menu.update(user_input);
-                break;
-            case State::Game:
-                sokoban_update(sokoban, user_input);
-                break;
-        }
-
-        // render
-        switch(state) {
-            case State::Menu:
-                menu.render();
-                break;
-            case State::Game:
-                ui_render_sokoban(sokoban);
-                break;
-        }
+    /////////////////////////////////////////////////////////
+    // loop
+    state->render();
+    while (RUNNING) {
+        state = state->update();
+        state->render();
     }
 
-    sokoban_free(sokoban);
-    ui_close();
+    // shutdown
+    sokoban_free(game.state);
+    endwin();
 
     return 0;
 }

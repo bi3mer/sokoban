@@ -1,36 +1,45 @@
-#include "ui.hpp"
-#include "ncurses.h"
+#include "game.hpp"
+#include "sokoban.hpp"
+#include <ncurses.h>
 
+State* Game::update() {
+    switch (getch()) {
+        case 'W':
+        case 'w':
+        case KEY_UP:
+            sokoban_update(state, {0,-1});
+            break;
+        case 'A':
+        case 'a':
+        case KEY_LEFT:
+            sokoban_update(state, {-1,0});
+            break;
+        case 'S':
+        case 's':
+        case KEY_DOWN:
+            sokoban_update(state, {0,1});
+            break;
+        case 'D':
+        case 'd':
+        case KEY_RIGHT:
+            sokoban_update(state, {1,0});
+            break;
+        case 'R':
+        case 'r':
+            sokoban_restart(state);
+            break;
+        case 'Q':
+        case 'q':
+            sokoban_restart(state);
+            return menu;
+        default:
+            break;
+    }
 
-void ui_init() {
-    initscr();
-    curs_set(0); // invisible cursor
-    keypad(stdscr, TRUE);
-
-    start_color();
-    init_pair('@', COLOR_WHITE, COLOR_BLACK);
-    init_pair('b', COLOR_RED, COLOR_BLACK);
-    init_pair('B', COLOR_GREEN, COLOR_BLACK);
-    init_pair('.', COLOR_RED, COLOR_BLACK);
-    init_pair('X', COLOR_WHITE, COLOR_WHITE);
-
-    init_pair(UI_HIGHLIGHTED, COLOR_BLACK, COLOR_WHITE);
-    init_pair(UI_REGULAR, COLOR_WHITE, COLOR_BLACK);
-}
-
-void ui_close() {
-    //------------------------------------------
-    // this will be removed when we get to menus
-    move(0, 0);
-    printw("You won!");
-    getch(); // pause before ending
-    //------------------------------------------
-
-    endwin();
-}
-
-char ui_get_char() {
-    return getch();
+    if (sokoban_game_over(state)) {
+        return menu;
+    }
+    return this;
 }
 
 inline void _ui_draw_char(const char c) {
@@ -40,7 +49,7 @@ inline void _ui_draw_char(const char c) {
     attroff(cp);
 }
 
-void ui_render_sokoban(const Sokoban & state) {
+void Game::render() {
     clear();
 
     int max_x, max_y;

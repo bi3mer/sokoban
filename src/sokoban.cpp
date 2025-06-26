@@ -65,33 +65,7 @@ void sokoban_restart(Sokoban& state) {
     state.player = state.original_player;
 }
 
-void sokoban_update(Sokoban& state, const int user_input) {
-    Point dir;
-    switch (user_input) {
-        case 'W':
-        case 'w':
-            dir = {0, -1};
-            break;
-        case 'A':
-        case 'a':
-            dir = {-1, 0};
-            break;
-        case 'S':
-        case 's':
-            dir = {0, 1};
-            break;
-        case 'D':
-        case 'd':
-            dir = {1, 0};
-            break;
-        case 'R':
-        case 'r':
-            sokoban_restart(state);
-            break;
-        default:
-            return;
-    }
-
+void sokoban_update(Sokoban& state, const Point& dir) {
     const Point player_pos = point_add(state.player, dir);
 
     // check the bounds

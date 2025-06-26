@@ -1,6 +1,6 @@
 #pragma once
 
-enum class State {
-    Menu = 0,
-    Game
+struct State {
+    virtual State* update() = 0;
+    virtual void render() = 0;
 };
