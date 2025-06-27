@@ -1,10 +1,10 @@
 #pragma once
 
-#include "sokoban.hpp"
 #include "state.hpp"
+#include <cstddef>
 
-struct Game : State {
-    Sokoban state;
+struct Instructions : State {
+    std::size_t user_selection = 0;
     State* menu;
 
     State* update() override;

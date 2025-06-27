@@ -9,7 +9,8 @@
 struct Menu : State {
     std::size_t user_selection = 0;
     State* game;
+    State* instructions;
 
     State* update() override;
-    void render() override;
+    void render() const override;
 };

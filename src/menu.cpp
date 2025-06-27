@@ -21,8 +21,7 @@ State* Menu::update() {
                 case 0:
                     return game;
                 case 1:
-                    // @TODO: put in instructions
-                    break;
+                    return instructions;
                 case 2:
                     RUNNING = false;
                     break;
@@ -52,7 +51,7 @@ State* Menu::update() {
     return this;
 }
 
-void Menu::render() {
+void Menu::render() const {
     clear();
     move(0,0);
 

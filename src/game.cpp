@@ -49,7 +49,7 @@ inline void _ui_draw_char(const char c) {
     attroff(cp);
 }
 
-void Game::render() {
+void Game::render() const {
     clear();
 
     int max_x, max_y;
