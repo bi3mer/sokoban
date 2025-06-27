@@ -1,3 +1,7 @@
 1. Make render function const for state.hpp, and update all the code
 2. Make instruction state
 3. Add instruction state to the state machine
+
+ADD:
+- key_escape to quit
+- add q and r into instructions scenes
