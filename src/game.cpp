@@ -37,6 +37,10 @@ State* Game::update() {
     }
 
     if (sokoban_game_over(state)) {
+        // This is pretty terrible... add a game over state or something
+        render();
+        getch(); // keypress so player can see game over state
+        sokoban_restart(state);
         return menu;
     }
     return this;
@@ -49,7 +53,7 @@ inline void _ui_draw_char(const char c) {
     attroff(cp);
 }
 
-void Game::render() {
+void Game::render() const {
     clear();
 
     int max_x, max_y;

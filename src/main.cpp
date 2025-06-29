@@ -7,6 +7,7 @@
 #include <vector>
 
 #include "game.hpp"
+#include "instructions.hpp"
 #include "menu.hpp"
 #include "sokoban.hpp"
 #include "state.hpp"
@@ -57,11 +58,14 @@ int main(int argc, char* argv[]) {
     /////////////////////////////////////////////////////////
     /// Set up state machine
     Menu menu;
+    Instructions instructions;
     Game game;
     sokoban_init_from_level(game.state, level);
 
     // transitions
     menu.game = &game;
+    menu.instructions = &instructions;
+    instructions.menu = &menu;
     game.menu = &menu;
 
     // set first state

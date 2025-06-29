@@ -1,10 +1,7 @@
 #pragma once
-
-#include "sokoban.hpp"
 #include "state.hpp"
 
-struct Game : State {
-    Sokoban state;
+struct Instructions : State {
     State* menu;
 
     State* update() override;
