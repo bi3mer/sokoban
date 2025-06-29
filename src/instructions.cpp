@@ -1,16 +1,18 @@
 #include "instructions.hpp"
 #include "menu.hpp"
-#include <cstddef>
 #include <cstring>
 #include <ncurses.h>
 
-const std::size_t INSTRUCTIONS_SIZE = 5;
+const std::size_t INSTRUCTIONS_SIZE = 8;
 const char* INSTRUCTIONS[INSTRUCTIONS_SIZE] = {
     "Move blocks ('b') over switches ('.') to win!",
     "W to move up",
     "A to move left",
     "S to move down",
     "D to move right",
+    " ",
+    "R to restart",
+    "Q to quit",
 };
 
 State* Instructions::update() {
@@ -28,15 +30,16 @@ void Instructions::render() const {
     int max_x, max_y;
     getmaxyx(stdscr, max_y, max_x);
 
-    int y = max_y / 3;
-    for (std::size_t i = 0; i < INSTRUCTIONS_SIZE; ++i, ++y) {
+    int y = max_y / 5;
+
+    for(std::size_t i = 0; i < INSTRUCTIONS_SIZE; ++i, ++y) {
         move(y, (max_x - strlen(INSTRUCTIONS[i])) / 2);
         printw(INSTRUCTIONS[i]);
     }
 
     move(y+2, (max_x - 19) / 2);
-    const auto cp = COLOR_PAIR(UI_HIGHLIGHTED);
-    attron(cp);
+    const auto highlighted = COLOR_PAIR(UI_HIGHLIGHTED);
+    attron(highlighted);
     printw("Return to Main Menu");
-    attroff(cp);
+    attroff(highlighted);
 }

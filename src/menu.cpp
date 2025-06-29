@@ -26,7 +26,6 @@ State* Menu::update() {
                     RUNNING = false;
                     break;
                 default:
-                    // @TODO: don't error out, just stop running
                     std::cerr << "Invalid menu selection index " << user_selection << std::endl;
                     RUNNING = false;
                     break;
