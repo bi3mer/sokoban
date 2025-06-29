@@ -19,3 +19,4 @@ An example of the `[[level-file]]` on mac/linux is `levels/level-0.txt`.
 - [Sokoban Part 4: Color and the Main Menu](https://www.youtube.com/watch?v=42ZuLIajps8)
 - [Sokoban Part 5: Restarting](https://www.youtube.com/watch?v=WjEhLT4OZLk)
 - [Sokoban Part 6: Menu Interaction](https://www.youtube.com/watch?v=CMHkWGfSPqg)
+- [Sokoban Part 7: State Machine Basics](https://www.youtube.com/watch?v=GkINdTax_Eg)
