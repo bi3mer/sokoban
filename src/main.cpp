@@ -1,16 +1,12 @@
 #include <cassert>
 #include <cstring>
-#include <iostream>
 #include <ncurses.h>
-#include <string>
-#include <vector>
 
 #include "constants.hpp"
 #include "game.hpp"
 #include "instructions.hpp"
 #include "level_progression.hpp"
 #include "menu.hpp"
-#include "sokoban.hpp"
 #include "state.hpp"
 
 bool RUNNING = true;
