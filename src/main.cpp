@@ -1,13 +1,14 @@
 #include <cassert>
 #include <cstring>
-#include <fstream>
 #include <iostream>
 #include <ncurses.h>
 #include <string>
 #include <vector>
 
+#include "constants.hpp"
 #include "game.hpp"
 #include "instructions.hpp"
+#include "level_progression.hpp"
 #include "menu.hpp"
 #include "sokoban.hpp"
 #include "state.hpp"
@@ -15,30 +16,6 @@
 bool RUNNING = true;
 
 int main(int argc, char* argv[]) {
-    if (argc != 2) {
-        std::cerr << "A path to a single Sokobon level must be provided." << std::endl;
-        return 1;
-    }
-
-    std::ifstream level_file(argv[1]);
-    if (!level_file.good()) {
-        std::cerr << "Could not open file: " << argv[1] << std::endl;
-        return 1;
-    }
-
-    std::vector<std::string> level;
-    std::string line;
-    while(getline(level_file, line)) {
-        level.push_back(line);
-    }
-
-    level_file.close();
-
-    const std::size_t num_columns = level[0].size();
-    for(std::size_t i = 1; i < level.size(); ++i) {
-        assert(level[i].size() == num_columns);
-    }
-
     /////////////////////////////////////////////////////////
     /// Initialize ncurses
     initscr();
@@ -52,19 +29,23 @@ int main(int argc, char* argv[]) {
     init_pair('B', COLOR_GREEN, COLOR_BLACK);
     init_pair('.', COLOR_RED, COLOR_BLACK);
     init_pair('X', COLOR_WHITE, COLOR_WHITE);
-    init_pair(UI_REGULAR, COLOR_WHITE, COLOR_BLACK);
-    init_pair(UI_HIGHLIGHTED, COLOR_BLACK, COLOR_WHITE);
+    init_pair(COLOR_REGULAR, COLOR_WHITE, COLOR_BLACK);
+    init_pair(COLOR_HIGHLIGHTED, COLOR_BLACK, COLOR_WHITE);
 
     /////////////////////////////////////////////////////////
     /// Set up state machine
     Menu menu;
     Instructions instructions;
+    LevelProgression level_progression;
     Game game;
-    sokoban_init_from_level(game.state, level);
 
     // transitions
-    menu.game = &game;
+    menu.level_progression = &level_progression;
     menu.instructions = &instructions;
+
+    level_progression.menu = &menu;
+    level_progression.game = &game;
+
     instructions.menu = &menu;
     game.menu = &menu;
 
@@ -80,7 +61,6 @@ int main(int argc, char* argv[]) {
     }
 
     // shutdown
-    sokoban_free(game.state);
     endwin();
 
     return 0;

@@ -7,6 +7,7 @@ struct Game : State {
     Sokoban state;
     State* menu;
 
+    ~Game();
     State* update() override;
     void render() const override;
 };

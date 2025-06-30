@@ -1,4 +1,5 @@
 #include "menu.hpp"
+#include "constants.hpp"
 #include "ncurses.h"
 #include <cstddef>
 #include <cstdlib>
@@ -19,7 +20,7 @@ State* Menu::update() {
         case '\n':
             switch(user_selection) {
                 case 0:
-                    return game;
+                    return level_progression;
                 case 1:
                     return instructions;
                 case 2:
@@ -33,11 +34,15 @@ State* Menu::update() {
             break;
         case 'W':
         case 'w':
+        case 'K':
+        case 'k':
         case KEY_UP:
             user_selection = (user_selection - 1) % MENU_SIZE;
             break;
         case 'S':
         case 's':
+        case 'J':
+        case 'j':
         case KEY_DOWN:
             user_selection = (user_selection + 1) % MENU_SIZE;
             break;
@@ -57,8 +62,8 @@ void Menu::render() const {
     int max_x, max_y;
     getmaxyx(stdscr, max_y, max_x);
 
-    const auto regular = COLOR_PAIR(UI_REGULAR);
-    const auto highlighted = COLOR_PAIR(UI_HIGHLIGHTED);
+    const auto regular = COLOR_PAIR(COLOR_REGULAR);
+    const auto highlighted = COLOR_PAIR(COLOR_HIGHLIGHTED);
 
     move(max_y / 3, (max_x - 7) / 2);
     attron(regular);

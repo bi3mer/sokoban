@@ -14,10 +14,10 @@ struct Sokoban {
     Point player = { 0, 0 };
     Point original_player;
 
-    unsigned char* original_blocks;
-    unsigned char* blocks;
-    unsigned char* solids;
-    unsigned char* switches;
+    unsigned char* original_blocks = nullptr;
+    unsigned char* blocks = nullptr;
+    unsigned char* solids = nullptr;
+    unsigned char* switches = nullptr;
 };
 
 inline std::size_t sokoban_index(const Sokoban& state, Point p) {

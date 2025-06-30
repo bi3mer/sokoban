@@ -2,25 +2,37 @@
 #include "sokoban.hpp"
 #include <ncurses.h>
 
+Game::~Game() {
+    sokoban_free(state);
+}
+
 State* Game::update() {
     switch (getch()) {
         case 'W':
         case 'w':
+        case 'K':
+        case 'k':
         case KEY_UP:
             sokoban_update(state, {0,-1});
             break;
         case 'A':
         case 'a':
+        case 'H':
+        case 'h':
         case KEY_LEFT:
             sokoban_update(state, {-1,0});
             break;
         case 'S':
         case 's':
+        case 'J':
+        case 'j':
         case KEY_DOWN:
             sokoban_update(state, {0,1});
             break;
         case 'D':
         case 'd':
+        case 'L':
+        case 'l':
         case KEY_RIGHT:
             sokoban_update(state, {1,0});
             break;
