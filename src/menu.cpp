@@ -1,5 +1,6 @@
 #include "menu.hpp"
 #include "constants.hpp"
+#include "key_macros.hpp"
 #include "ncurses.h"
 #include <cstddef>
 #include <cstdlib>
@@ -16,8 +17,7 @@ const char* MENU_OPTIONS[MENU_SIZE] = {
 
 State* Menu::update() {
     switch (getch()) {
-        case ' ':
-        case '\n':
+        CASE_SELECT_KEYS
             switch(user_selection) {
                 case 0:
                     return level_progression;
@@ -32,23 +32,13 @@ State* Menu::update() {
                     break;
             }
             break;
-        case 'W':
-        case 'w':
-        case 'K':
-        case 'k':
-        case KEY_UP:
+        CASE_UP_KEYS
             user_selection = (user_selection - 1) % MENU_SIZE;
             break;
-        case 'S':
-        case 's':
-        case 'J':
-        case 'j':
-        case KEY_DOWN:
+        CASE_DOWN_KEYS
             user_selection = (user_selection + 1) % MENU_SIZE;
             break;
-        case 'Q':
-        case 'q':
-        case KEY_ESC:
+        CASE_Q_KEYS
             RUNNING = false;
             break;
     }

@@ -1,5 +1,6 @@
 #include "level_progression.hpp"
 #include "constants.hpp"
+#include "key_macros.hpp"
 #include "sokoban.hpp"
 
 #include <fstream>
@@ -26,29 +27,18 @@ void LevelProgression::_load_progression() {
 
 State* LevelProgression::update() {
     switch(getch()) {
-        case 'Q':
-        case 'q':
-        case KEY_ESC:
+        CASE_Q_KEYS
             return menu;
-        case 'W':
-        case 'w':
-        case 'K':
-        case 'k':
-        case KEY_UP:
+        CASE_UP_KEYS
             // @TODO: should it wrap down?
             selected_index = (selected_index - 1) % levels.size();
             break;
-        case 'S':
-        case 's':
-        case 'J':
-        case 'j':
-        case KEY_DOWN:
+        CASE_DOWN_KEYS
             // @TODO: macro for key up, key down, etc.?
             // @TODO: should it not wrap up?
             selected_index = (selected_index + 1) % levels.size();
             break;
-        case '\n':
-        case ' ': {
+        CASE_SELECT_KEYS {
             ///////////////////////////////////////////////////////////////////
             /// @TODO: this is bad placement, and should be part of Sokoboan,
             /// but we aren't going to make any updates until we get to

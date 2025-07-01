@@ -1,0 +1,1 @@
+1. macros for cases to make switch statements easier
