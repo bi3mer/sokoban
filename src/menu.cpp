@@ -48,6 +48,7 @@ State* Menu::update() {
             break;
         case 'Q':
         case 'q':
+        case KEY_ESC:
             RUNNING = false;
             break;
     }

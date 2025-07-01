@@ -1,8 +1,0 @@
-1. vim keybindings for menu
-2. vim keybindings for game
-3. constants.hpp
-4. destructor for game.hpp to call sokoban_free, which needs a nullptr check (set defaults in struct to nullptr)
-5. update level names to 00.txt, 01.txt, and 02.txt
-5. create level_progression.hpp
-6. create level_progression.cpp
-6. Hot reload level progression with R and r

@@ -5,7 +5,7 @@
 
 struct Game : State {
     Sokoban state;
-    State* menu;
+    State* level_progression;
 
     ~Game();
     State* update() override;

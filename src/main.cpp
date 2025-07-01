@@ -43,7 +43,7 @@ int main(int argc, char* argv[]) {
     level_progression.game = &game;
 
     instructions.menu = &menu;
-    game.menu = &menu;
+    game.level_progression = &level_progression;
 
     // set first state
     State* state = &menu;

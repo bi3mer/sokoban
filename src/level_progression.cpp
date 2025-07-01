@@ -2,12 +2,13 @@
 #include "constants.hpp"
 #include "sokoban.hpp"
 
-#include <algorithm>
-#include <cassert>
 #include <fstream>
-#include <filesystem>
+#include <algorithm>
+#include <cstddef>
 #include <iostream>
 #include <ncurses.h>
+
+#include <filesystem>
 
 extern bool RUNNING;
 
@@ -16,7 +17,7 @@ LevelProgression::LevelProgression() {
 }
 
 void LevelProgression::_load_progression() {
-    for (const auto& entry : std::filesystem::directory_iterator(LEVELS_DIR))  {
+    for (const auto& entry : std::filesystem::directory_iterator(LEVELS_DIR)) {
         levels.push_back(entry.path());
     }
 
@@ -24,11 +25,28 @@ void LevelProgression::_load_progression() {
 }
 
 State* LevelProgression::update() {
-    switch (getch()) {
+    switch(getch()) {
         case 'Q':
         case 'q':
-        case 27:
+        case KEY_ESC:
             return menu;
+        case 'W':
+        case 'w':
+        case 'K':
+        case 'k':
+        case KEY_UP:
+            // @TODO: should it wrap down?
+            selected_index = (selected_index - 1) % levels.size();
+            break;
+        case 'S':
+        case 's':
+        case 'J':
+        case 'j':
+        case KEY_DOWN:
+            // @TODO: macro for key up, key down, etc.?
+            // @TODO: should it not wrap up?
+            selected_index = (selected_index + 1) % levels.size();
+            break;
         case '\n':
         case ' ': {
             ///////////////////////////////////////////////////////////////////
@@ -40,7 +58,6 @@ State* LevelProgression::update() {
             if (!level_file.good()) {
                 std::cerr << "Could not open file: " << levels[selected_index] << std::endl;
                 RUNNING = false;
-                return this;
             }
 
             std::vector<std::string> level;
@@ -56,58 +73,36 @@ State* LevelProgression::update() {
                 assert(level[i].size() == num_columns);
             }
 
+            sokoban_free(game->state);
             sokoban_init_from_level(game->state, level);
-            ///////////////////////////////////////////////////////////////////
 
             return game;
+            ///////////////////////////////////////////////////////////////////
         }
-        case 'R':
-        case 'r':
-            levels.clear();
-            _load_progression();
-            break;
-        case 'W':
-        case 'w':
-        case 'K':
-        case 'k':
-        case KEY_UP:
-            selected_index = (selected_index - 1) % levels.size();
-            break;
-        case 'S':
-        case 's':
-        case 'J':
-        case 'j':
-        case KEY_DOWN:
-            selected_index = (selected_index + 1) % levels.size();
-            break;
         default:
             break;
     }
+
     return this;
 }
 
 void LevelProgression::render() const {
     clear();
     move(0,0);
-    printw("level progression state");
+    printw("Level Progression");
 
-    const auto regular = COLOR_PAIR(COLOR_REGULAR);
     const auto highlighted = COLOR_PAIR(COLOR_HIGHLIGHTED);
+    const auto regular = COLOR_PAIR(COLOR_REGULAR);
 
     int y = 2;
-    for(std::size_t i = 0; i < levels.size(); ++i) {
+    for (std::size_t i = 0; i < levels.size(); ++i, ++y) {
         move(y, 0);
 
-        if (i == selected_index) {
-            attron(highlighted);
-            printw(levels[i].c_str());
-            attroff(highlighted);
-        } else {
-            attron(regular);
-            printw(levels[i].c_str());
-            attroff(regular);
-        }
+        const int color = i == selected_index ? highlighted : regular;
 
-        ++y;
+        attron(color);
+        printw(levels[i].c_str());
+        attroff(color);
     }
 }
+

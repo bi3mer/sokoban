@@ -1,4 +1,5 @@
 #include "game.hpp"
+#include "constants.hpp"
 #include "sokoban.hpp"
 #include <ncurses.h>
 
@@ -42,8 +43,9 @@ State* Game::update() {
             break;
         case 'Q':
         case 'q':
+        case KEY_ESC:
             sokoban_restart(state);
-            return menu;
+            return level_progression;
         default:
             break;
     }
@@ -53,7 +55,7 @@ State* Game::update() {
         render();
         getch(); // keypress so player can see game over state
         sokoban_restart(state);
-        return menu;
+        return level_progression;
     }
     return this;
 }
