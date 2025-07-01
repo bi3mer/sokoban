@@ -1,4 +1,5 @@
 #include "instructions.hpp"
+#include "constants.hpp"
 #include "menu.hpp"
 #include <cstring>
 #include <ncurses.h>
@@ -38,7 +39,7 @@ void Instructions::render() const {
     }
 
     move(y+2, (max_x - 19) / 2);
-    const auto highlighted = COLOR_PAIR(UI_HIGHLIGHTED);
+    const auto highlighted = COLOR_PAIR(COLOR_HIGHLIGHTED);
     attron(highlighted);
     printw("Return to Main Menu");
     attroff(highlighted);

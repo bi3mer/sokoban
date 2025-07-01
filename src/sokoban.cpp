@@ -96,8 +96,10 @@ void sokoban_update(Sokoban& state, const Point& dir) {
 }
 
 void sokoban_free(Sokoban& state) {
-    free(state.original_blocks);
-    free(state.blocks);
-    free(state.solids);
-    free(state.switches);
+    if (state.original_blocks == nullptr) {
+        free(state.original_blocks);
+        free(state.blocks);
+        free(state.solids);
+        free(state.switches);
+    }
 }
