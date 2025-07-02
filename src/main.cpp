@@ -25,8 +25,15 @@ int main(int argc, char* argv[]) {
     init_pair('B', COLOR_GREEN, COLOR_BLACK);
     init_pair('.', COLOR_RED, COLOR_BLACK);
     init_pair('X', COLOR_WHITE, COLOR_WHITE);
+
     init_pair(COLOR_REGULAR, COLOR_WHITE, COLOR_BLACK);
     init_pair(COLOR_HIGHLIGHTED, COLOR_BLACK, COLOR_WHITE);
+
+    init_pair(COLOR_UNLOCKED, COLOR_GREEN, COLOR_BLACK);
+    init_pair(COLOR_UNLOCKED_HIGHLIGHTED, COLOR_BLACK, COLOR_GREEN);
+
+    init_pair(COLOR_LOCKED, COLOR_RED, COLOR_BLACK);
+    init_pair(COLOR_LOCKED_HIGHLIGHTED, COLOR_BLACK, COLOR_RED);
 
     /////////////////////////////////////////////////////////
     /// Set up state machine

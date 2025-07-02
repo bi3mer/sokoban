@@ -1,5 +1,4 @@
 #include "game.hpp"
-#include "constants.hpp"
 #include "key_macros.hpp"
 #include "sokoban.hpp"
 #include <ncurses.h>

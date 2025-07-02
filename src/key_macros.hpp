@@ -1,5 +1,7 @@
 #pragma once
 
+#include "constants.hpp"
+
 #define CASE_UP_KEYS \
     case 'W': \
     case 'w': \
