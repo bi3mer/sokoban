@@ -1,6 +1,6 @@
 #include "instructions.hpp"
 #include "constants.hpp"
-#include "menu.hpp"
+#include "key_macros.hpp"
 #include <cstring>
 #include <ncurses.h>
 
@@ -17,12 +17,12 @@ const char* INSTRUCTIONS[INSTRUCTIONS_SIZE] = {
 };
 
 State* Instructions::update() {
-    const int user_input = getch();
-    if (user_input == '\n' || user_input == ' ') {
-        return menu;
+    switch(getch()) {
+        CASE_SELECT_KEYS
+            return menu;
+        default:
+            return this;
     }
-
-    return this;
 }
 
 void Instructions::render() const {

@@ -1,5 +1,6 @@
 #include "game.hpp"
 #include "constants.hpp"
+#include "key_macros.hpp"
 #include "sokoban.hpp"
 #include <ncurses.h>
 
@@ -9,41 +10,23 @@ Game::~Game() {
 
 State* Game::update() {
     switch (getch()) {
-        case 'W':
-        case 'w':
-        case 'K':
-        case 'k':
-        case KEY_UP:
+        CASE_UP_KEYS
             sokoban_update(state, {0,-1});
             break;
-        case 'A':
-        case 'a':
-        case 'H':
-        case 'h':
-        case KEY_LEFT:
+        CASE_LEFT_KEYS
             sokoban_update(state, {-1,0});
             break;
-        case 'S':
-        case 's':
-        case 'J':
-        case 'j':
-        case KEY_DOWN:
+        CASE_DOWN_KEYS
             sokoban_update(state, {0,1});
             break;
-        case 'D':
-        case 'd':
-        case 'L':
-        case 'l':
-        case KEY_RIGHT:
+        CASE_RIGHT_KEYS
             sokoban_update(state, {1,0});
             break;
         case 'R':
         case 'r':
             sokoban_restart(state);
             break;
-        case 'Q':
-        case 'q':
-        case KEY_ESC:
+        CASE_Q_KEYS
             sokoban_restart(state);
             return level_progression;
         default:

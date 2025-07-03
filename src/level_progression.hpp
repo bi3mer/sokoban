@@ -8,7 +8,9 @@
 #include <vector>
 
 struct LevelProgression : State {
-    std::size_t selected_index = 0;
+    int selected_index = 0;
+    int max_level_beaten = 0;
+
     std::vector<std::string> levels;
     State* menu = nullptr;
     Game* game = nullptr;
