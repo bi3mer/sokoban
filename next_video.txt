@@ -1,1 +1,12 @@
-1. macros for cases to make switch statements easier
+1. read file if exists
+    - talk about how easy it is to cheat, but we don't really care
+    - test with save.txt
+2. else set defaults
+3. update .gitignore
+4. save data
+5. update game max_leve_beaten
+    - have to handle circular dependency with forward declaration. Not good for large
+      because the compilation time can go way up. Not a problem for this small. To fix
+      we could create an application state struct and pass it to each state on
+      construction
+6. auto save on update

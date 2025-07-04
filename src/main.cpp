@@ -7,6 +7,7 @@
 #include "instructions.hpp"
 #include "level_progression.hpp"
 #include "menu.hpp"
+#include "save_system.hpp"
 #include "state.hpp"
 
 bool RUNNING = true;
@@ -56,6 +57,10 @@ int main(int argc, char* argv[]) {
     State* state = &menu;
 
     /////////////////////////////////////////////////////////
+    /// Load saved data or set defaults
+    level_progression.max_level_beaten = ss_get_data();
+
+    /////////////////////////////////////////////////////////
     // loop
     state->render();
     while (RUNNING) {
@@ -63,8 +68,10 @@ int main(int argc, char* argv[]) {
         state->render();
     }
 
-    // shutdown
+    /////////////////////////////////////////////////////////
+    /// shutdown
     endwin();
+    ss_save_data(level_progression.max_level_beaten);
 
     return 0;
 }
