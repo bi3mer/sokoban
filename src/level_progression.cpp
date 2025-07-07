@@ -92,6 +92,7 @@ State* LevelProgression::update() {
 
 void LevelProgression::render() const {
     clear();
+
     int max_x, max_y;
     getmaxyx(stdscr, max_y, max_x);
 

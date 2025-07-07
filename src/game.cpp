@@ -1,6 +1,7 @@
 #include "game.hpp"
 #include "constants.hpp"
 #include "key_macros.hpp"
+#include "save_system.hpp"
 #include "sokoban.hpp"
 #include <ncurses.h>
 
@@ -34,6 +35,14 @@ State* Game::update() {
     }
 
     if (sokoban_game_over(state)) {
+        // auto-save if necessary
+        const int max_level_beaten = level_progression->selected_index + 1;
+
+        if (max_level_beaten >= level_progression->max_level_beaten) {
+            ++level_progression->max_level_beaten;
+            ss_save_data(level_progression->max_level_beaten);
+        }
+
         // This is pretty terrible... add a game over state or something
         render();
         getch(); // keypress so player can see game over state

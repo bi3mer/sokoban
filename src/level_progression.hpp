@@ -7,6 +7,7 @@
 #include <string>
 #include <vector>
 
+struct Game;
 struct LevelProgression : State {
     int selected_index = 0;
     int max_level_beaten = 0;

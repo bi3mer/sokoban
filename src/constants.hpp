@@ -10,3 +10,4 @@ const int COLOR_LOCKED_HIGHLIGHTED = 6;
 const int KEY_ESC = 27;
 
 const char * const LEVELS_DIR = "levels";
+const char * const SAVE_FILE = "save.txt";
