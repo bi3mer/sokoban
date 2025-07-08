@@ -1,4 +1,5 @@
 #include "level_progression.hpp"
+#include "application_state.hpp"
 #include "constants.hpp"
 #include "key_macros.hpp"
 #include "sokoban.hpp"
@@ -16,7 +17,7 @@ extern bool RUNNING;
 const int LEVELS_PER_ROW = 5;
 const int SPACE_BETWEEN_LEVELS = 5;
 
-LevelProgression::LevelProgression() {
+LevelProgression::LevelProgression(ApplicationState& _state) : State(_state){
     _load_progression();
 }
 
@@ -31,36 +32,36 @@ void LevelProgression::_load_progression() {
 State* LevelProgression::update() {
     switch(getch()) {
         CASE_UP_KEYS
-            selected_index = std::max(0, selected_index - LEVELS_PER_ROW);
+            application_state.level_id = std::max(0, application_state.level_id - LEVELS_PER_ROW);
             break;
         CASE_DOWN_KEYS
-            selected_index = std::min(
+            application_state.level_id = std::min(
                 static_cast<int>(levels.size()) - 1,
-                selected_index + LEVELS_PER_ROW
+                application_state.level_id + LEVELS_PER_ROW
             );
             break;
         CASE_LEFT_KEYS
-            selected_index = std::max(0, selected_index - 1);
+            application_state.level_id = std::max(0, application_state.level_id - 1);
             break;
         CASE_RIGHT_KEYS
-            selected_index = std::min(
+            application_state.level_id = std::min(
                 static_cast<int>(levels.size()) - 1,
-                selected_index + 1
+                application_state.level_id + 1
             );
             break;
         CASE_Q_KEYS
             return menu;
         CASE_SELECT_KEYS {
-            if (selected_index > max_level_beaten) break;
+            if (application_state.level_id > application_state.level_data.size()) break;
 
             ///////////////////////////////////////////////////////////////////
             /// @TODO: this is bad placement, and should be part of Sokoboan,
             /// but we aren't going to make any updates until we get to
             /// improving the way files are read. Ideally, we should just pass
             /// a file path to sokoban, and that's it.
-            std::ifstream level_file(levels[selected_index]);
+            std::ifstream level_file(levels[application_state.level_id]);
             if (!level_file.good()) {
-                std::cerr << "Could not open file: " << levels[selected_index] << std::endl;
+                std::cerr << "Could not open file: " << levels[application_state.level_id] << std::endl;
                 RUNNING = false;
             }
 
@@ -79,6 +80,9 @@ State* LevelProgression::update() {
 
             sokoban_free(game->state);
             sokoban_init_from_level(game->state, level);
+
+            game->start_time = clock();
+            game->moves = 0;
 
             return game;
             ///////////////////////////////////////////////////////////////////
@@ -118,8 +122,8 @@ void LevelProgression::render() const {
             x += SPACE_BETWEEN_LEVELS;
         }
 
-        const bool level_unlocked = i <= max_level_beaten;
-        if (i == selected_index) {
+        const bool level_unlocked = i <= application_state.level_data.size();
+        if (i == application_state.level_id) {
            color = level_unlocked ? unlocked_highlighted : locked_highlighted;
         } else {
             color = level_unlocked ? unlocked_regular : locked_regular;

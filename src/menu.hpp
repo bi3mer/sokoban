@@ -1,5 +1,6 @@
 #pragma once
 
+#include "application_state.hpp"
 #include "state.hpp"
 #include <cstddef>
 
@@ -8,6 +9,7 @@ struct Menu : State {
     State* level_progression;
     State* instructions;
 
+    Menu(ApplicationState& state) : State(state) {};
     State* update() override;
     void render() const override;
 };

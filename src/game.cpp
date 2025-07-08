@@ -1,7 +1,7 @@
 #include "game.hpp"
+#include "application_state.hpp"
 #include "constants.hpp"
 #include "key_macros.hpp"
-#include "save_system.hpp"
 #include "sokoban.hpp"
 #include <ncurses.h>
 
@@ -12,19 +12,25 @@ Game::~Game() {
 State* Game::update() {
     switch (getch()) {
         CASE_UP_KEYS
+            ++moves;
             sokoban_update(state, {0,-1});
             break;
         CASE_LEFT_KEYS
+            ++moves;
             sokoban_update(state, {-1,0});
             break;
         CASE_DOWN_KEYS
+            ++moves;
             sokoban_update(state, {0,1});
             break;
         CASE_RIGHT_KEYS
+            ++moves;
             sokoban_update(state, {1,0});
             break;
         case 'R':
         case 'r':
+            moves = 0;
+            start_time = clock();
             sokoban_restart(state);
             break;
         CASE_Q_KEYS
@@ -36,17 +42,19 @@ State* Game::update() {
 
     if (sokoban_game_over(state)) {
         // auto-save if necessary
-        const int max_level_beaten = level_progression->selected_index + 1;
+        const LevelData ld = {
+            .moves = 100,
+            .seconds = static_cast<double>(clock() - start_time)
+        };
 
-        if (max_level_beaten >= level_progression->max_level_beaten) {
-            ++level_progression->max_level_beaten;
-            ss_save_data(level_progression->max_level_beaten);
-        }
+        application_state.update(ld);
+
 
         // This is pretty terrible... add a game over state or something
         render();
         getch(); // keypress so player can see game over state
         sokoban_restart(state);
+
         return level_progression;
     }
     return this;
