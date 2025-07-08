@@ -19,11 +19,10 @@ const char* INSTRUCTIONS[INSTRUCTIONS_SIZE] = {
 State* Instructions::update() {
     switch(getch()) {
         CASE_SELECT_KEYS
-        CASE_Q_KEYS
             return menu;
+        default:
+            return this;
     }
-
-    return this;
 }
 
 void Instructions::render() const {

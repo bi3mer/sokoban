@@ -1,10 +1,9 @@
 #pragma once
 
-#include <string>
+#include "constants.hpp"
 #include <fstream>
 #include <iostream>
-
-#include "constants.hpp"
+#include <string>
 
 inline int ss_get_data() {
     std::ifstream in_file(SAVE_FILE);
@@ -16,24 +15,26 @@ inline int ss_get_data() {
     std::string data;
     getline(in_file, data);
 
+    int num_data = 0;
     try {
-        int num_data = std::stoi(data);
-        in_file.close();
-        return num_data;
+        num_data = std::stoi(data);
     } catch(...) {
-        std::cerr << "Could not read data in " << SAVE_FILE << std::endl;
-        std::cerr << "Delete the file or uncorrupt it." << std::endl;
-        return 1;
+        // @TODO: should probably log to a file or something
     }
 
-    return 0;
+    in_file.close();
+
+    return num_data;
 }
 
 inline void ss_save_data(int data) {
     std::ofstream out_file(SAVE_FILE);
 
     if (!out_file) {
-        std::cerr << "Encountered an error when opening " << SAVE_FILE << " and data was not stored.";
+        std::cerr << "Encountered an error when opening "
+                  << SAVE_FILE
+                  << " and data was not stored." << std::endl;
+
         exit(1);
     }
 

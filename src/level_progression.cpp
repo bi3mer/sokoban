@@ -3,7 +3,6 @@
 #include "key_macros.hpp"
 #include "sokoban.hpp"
 
-#include <cstdio>
 #include <fstream>
 #include <algorithm>
 #include <cstddef>
@@ -31,14 +30,12 @@ void LevelProgression::_load_progression() {
 
 State* LevelProgression::update() {
     switch(getch()) {
-        CASE_Q_KEYS
-            return menu;
         CASE_UP_KEYS
             selected_index = std::max(0, selected_index - LEVELS_PER_ROW);
             break;
         CASE_DOWN_KEYS
-            selected_index = std::min(static_cast<int>(
-                levels.size()) - 1,
+            selected_index = std::min(
+                static_cast<int>(levels.size()) - 1,
                 selected_index + LEVELS_PER_ROW
             );
             break;
@@ -51,8 +48,9 @@ State* LevelProgression::update() {
                 selected_index + 1
             );
             break;
+        CASE_Q_KEYS
+            return menu;
         CASE_SELECT_KEYS {
-            // player cannot play unlocked levels
             if (selected_index > max_level_beaten) break;
 
             ///////////////////////////////////////////////////////////////////
@@ -94,11 +92,12 @@ State* LevelProgression::update() {
 
 void LevelProgression::render() const {
     clear();
+
     int max_x, max_y;
     getmaxyx(stdscr, max_y, max_x);
 
     int y = max_y / 6;
-    move(y, (max_x - 18) / 2);
+    move(y, (max_x - 17) / 2); // 17 is length of "Level Progression"
     printw("Level Progression");
 
     const auto unlocked_regular = COLOR_PAIR(COLOR_UNLOCKED);
@@ -106,7 +105,7 @@ void LevelProgression::render() const {
     const auto locked_regular = COLOR_PAIR(COLOR_LOCKED);
     const auto locked_highlighted = COLOR_PAIR(COLOR_LOCKED_HIGHLIGHTED);
 
-    const int min_x = (max_x - (LEVELS_PER_ROW-1) * SPACE_BETWEEN_LEVELS) / 2;
+    const int min_x = (max_x - (LEVELS_PER_ROW - 1) * SPACE_BETWEEN_LEVELS) / 2;
     int x = min_x;
     y += 2;
 
@@ -119,23 +118,15 @@ void LevelProgression::render() const {
             x += SPACE_BETWEEN_LEVELS;
         }
 
+        const bool level_unlocked = i <= max_level_beaten;
         if (i == selected_index) {
-            if (i > max_level_beaten) {
-                color = locked_highlighted;
-            } else {
-                color = unlocked_highlighted;
-            }
+           color = level_unlocked ? unlocked_highlighted : locked_highlighted;
         } else {
-            if (i > max_level_beaten) {
-                color = locked_regular;
-            } else {
-                color = unlocked_regular;
-            }
-
+            color = level_unlocked ? unlocked_regular : locked_regular;
         }
 
         attron(color);
-        mvprintw(y, x, "%c%c", levels[i][7], levels[i][8]); // file format has 7 and 8 and numbers always
+        mvprintw(y, x, "%c%c", levels[i][7], levels[i][8]); // levels/XX.txt, xx in pos 7 and 8
         attroff(color);
     }
 }

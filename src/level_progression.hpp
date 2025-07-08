@@ -1,3 +1,4 @@
+
 #pragma once
 
 #include "game.hpp"
@@ -9,9 +10,9 @@
 struct Game;
 struct LevelProgression : State {
     int selected_index = 0;
-    int max_level_beaten = 1;
-    std::vector<std::string> levels;
+    int max_level_beaten = 0;
 
+    std::vector<std::string> levels;
     State* menu = nullptr;
     Game* game = nullptr;
 
