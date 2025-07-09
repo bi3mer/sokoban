@@ -1,8 +1,9 @@
 #include "game.hpp"
-#include "constants.hpp"
 #include "key_macros.hpp"
 #include "save_system.hpp"
 #include "sokoban.hpp"
+#include "log.hpp"
+
 #include <ncurses.h>
 
 Game::~Game() {
@@ -25,21 +26,32 @@ State* Game::update() {
             break;
         case 'R':
         case 'r':
+            Log::info("game :: restart");
             sokoban_restart(state);
             break;
         CASE_Q_KEYS
             sokoban_restart(state);
+            Log::info("game :: player quit");
+            Log::info("game :: goto level progression");
             return level_progression;
         default:
             break;
     }
 
     if (sokoban_game_over(state)) {
+        Log::info("game :: player won");
         // auto-save if necessary
         const int max_level_beaten = level_progression->selected_index + 1;
 
         if (max_level_beaten >= level_progression->max_level_beaten) {
             ++level_progression->max_level_beaten;
+            Log::info(
+               std::format(
+                   "game :: unlocked level: {}",
+                   level_progression->max_level_beaten
+               ).c_str()
+            );
+
             ss_save_data(level_progression->max_level_beaten);
         }
 
@@ -47,6 +59,8 @@ State* Game::update() {
         render();
         getch(); // keypress so player can see game over state
         sokoban_restart(state);
+
+        Log::info("game :: goto level progression");
         return level_progression;
     }
     return this;

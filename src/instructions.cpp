@@ -1,6 +1,8 @@
 #include "instructions.hpp"
 #include "constants.hpp"
 #include "key_macros.hpp"
+#include "log.hpp"
+
 #include <cstring>
 #include <ncurses.h>
 
@@ -19,6 +21,7 @@ const char* INSTRUCTIONS[INSTRUCTIONS_SIZE] = {
 State* Instructions::update() {
     switch(getch()) {
         CASE_SELECT_KEYS
+            Log::info("level progression :: goto menu");
             return menu;
         default:
             return this;

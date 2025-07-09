@@ -6,6 +6,7 @@
 #include "game.hpp"
 #include "instructions.hpp"
 #include "level_progression.hpp"
+#include "log.hpp"
 #include "menu.hpp"
 #include "save_system.hpp"
 #include "state.hpp"
@@ -13,8 +14,11 @@
 bool RUNNING = true;
 
 int main(int argc, char* argv[]) {
+    Log::init();
+
     /////////////////////////////////////////////////////////
     /// Initialize ncurses
+    Log::info("initializing ncurses.");
     initscr();
     curs_set(0); // invisible cursor
     keypad(stdscr, TRUE);
@@ -38,6 +42,7 @@ int main(int argc, char* argv[]) {
 
     /////////////////////////////////////////////////////////
     /// Set up state machine
+    Log::info("setting up state machine");
     Menu menu;
     Instructions instructions;
     LevelProgression level_progression;
@@ -62,6 +67,7 @@ int main(int argc, char* argv[]) {
 
     /////////////////////////////////////////////////////////
     // loop
+    Log::info("beginning game loop.");
     state->render();
     while (RUNNING) {
         state = state->update();
@@ -71,6 +77,7 @@ int main(int argc, char* argv[]) {
     // shutdown
     endwin();
     ss_save_data(level_progression.max_level_beaten);
+    Log::close();
 
     return 0;
 }

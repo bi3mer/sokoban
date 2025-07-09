@@ -2,7 +2,9 @@
 #include "constants.hpp"
 #include "key_macros.hpp"
 #include "sokoban.hpp"
+#include "log.hpp"
 
+#include <format>
 #include <fstream>
 #include <algorithm>
 #include <cstddef>
@@ -49,15 +51,33 @@ State* LevelProgression::update() {
             );
             break;
         CASE_Q_KEYS
+            Log::info("level progression :: goto menu");
             return menu;
         CASE_SELECT_KEYS {
-            if (selected_index > max_level_beaten) break;
+            if (selected_index > max_level_beaten) {
+                Log::info(
+                    std::format(
+                        "level progression :: Locked level selection: {} > {}",
+                        selected_index,
+                        max_level_beaten
+                    ).c_str()
+                );
+
+                break;
+            }
 
             ///////////////////////////////////////////////////////////////////
             /// @TODO: this is bad placement, and should be part of Sokoboan,
             /// but we aren't going to make any updates until we get to
             /// improving the way files are read. Ideally, we should just pass
             /// a file path to sokoban, and that's it.
+            Log::info(
+                std::format(
+                    "level progression :: loading level: {}",
+                    levels[selected_index]
+                ).c_str()
+            );
+
             std::ifstream level_file(levels[selected_index]);
             if (!level_file.good()) {
                 std::cerr << "Could not open file: " << levels[selected_index] << std::endl;
@@ -80,6 +100,7 @@ State* LevelProgression::update() {
             sokoban_free(game->state);
             sokoban_init_from_level(game->state, level);
 
+            Log::info("level progression :: goto game");
             return game;
             ///////////////////////////////////////////////////////////////////
         }

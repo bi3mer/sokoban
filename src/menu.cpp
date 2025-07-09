@@ -1,10 +1,11 @@
 #include "menu.hpp"
 #include "constants.hpp"
 #include "key_macros.hpp"
+#include "log.hpp"
 #include "ncurses.h"
 #include <cstddef>
 #include <cstdlib>
-#include <iostream>
+#include <format>
 
 extern bool RUNNING;
 
@@ -20,15 +21,24 @@ State* Menu::update() {
         CASE_SELECT_KEYS
             switch(user_selection) {
                 case 0:
+                    Log::info("menu :: goto level progression");
                     return level_progression;
                 case 1:
+                    Log::info("menu :: goto instructions");
                     return instructions;
                 case 2:
+                    Log::info("menu :: player exiting");
                     RUNNING = false;
                     break;
                 default:
-                    std::cerr << "Invalid menu selection index " << user_selection << std::endl;
-                    RUNNING = false;
+                    Log::warn(
+                        std::format(
+                            "invalid menu selection index: {}",
+                            user_selection
+                        ).c_str()
+                    );
+
+                    user_selection = 0;
                     break;
             }
             break;
@@ -39,6 +49,7 @@ State* Menu::update() {
             user_selection = (user_selection + 1) % MENU_SIZE;
             break;
         CASE_Q_KEYS
+            Log::info("menu :: player quitting");
             RUNNING = false;
             break;
     }
