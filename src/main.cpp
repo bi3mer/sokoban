@@ -11,10 +11,12 @@
 #include "save_system.hpp"
 #include "state.hpp"
 
-bool RUNNING = true;
 
 int main(int argc, char* argv[]) {
+    /////////////////////////////////////////////////////////
+    /// Initialize logger and state
     Log::init();
+    ApplicationState application_state;
 
     /////////////////////////////////////////////////////////
     /// Initialize ncurses
@@ -43,10 +45,10 @@ int main(int argc, char* argv[]) {
     /////////////////////////////////////////////////////////
     /// Set up state machine
     Log::info("setting up state machine");
-    Menu menu;
-    Instructions instructions;
-    LevelProgression level_progression;
-    Game game;
+    Menu menu(&application_state);
+    Instructions instructions(&application_state);
+    LevelProgression level_progression(&application_state);
+    Game game(&application_state);
 
     // transitions
     menu.level_progression = &level_progression;
@@ -59,8 +61,8 @@ int main(int argc, char* argv[]) {
     game.level_progression = &level_progression;
 
     // get max unlocked level from save data
-    level_progression.max_level_beaten = ss_get_data();
-    std::cout << level_progression.max_level_beaten << std::endl;
+    application_state.max_level_beaten = ss_get_data();
+    std::cout << application_state.max_level_beaten << std::endl;
 
     // set first state
     State* state = &menu;
@@ -69,14 +71,14 @@ int main(int argc, char* argv[]) {
     // loop
     Log::info("beginning game loop.");
     state->render();
-    while (RUNNING) {
+    while (application_state.running) {
         state = state->update();
         state->render();
     }
 
     // shutdown
     endwin();
-    ss_save_data(level_progression.max_level_beaten);
+    ss_save_data(application_state.max_level_beaten);
     Log::close();
 
     return 0;

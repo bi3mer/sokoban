@@ -7,8 +7,6 @@
 #include <cstdlib>
 #include <format>
 
-extern bool RUNNING;
-
 const std::size_t MENU_SIZE = 3;
 const char* MENU_OPTIONS[MENU_SIZE] = {
     "Play",
@@ -28,7 +26,7 @@ State* Menu::update() {
                     return instructions;
                 case 2:
                     Log::info("menu :: player exiting");
-                    RUNNING = false;
+                    application_state->running = false;
                     break;
                 default:
                     Log::warn(
@@ -50,7 +48,7 @@ State* Menu::update() {
             break;
         CASE_Q_KEYS
             Log::info("menu :: player quitting");
-            RUNNING = false;
+            application_state->running = false;
             break;
     }
 

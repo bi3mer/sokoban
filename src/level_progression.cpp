@@ -1,5 +1,4 @@
 #include "level_progression.hpp"
-#include "constants.hpp"
 #include "key_macros.hpp"
 #include "sokoban.hpp"
 #include "log.hpp"
@@ -13,14 +12,8 @@
 
 #include <filesystem>
 
-extern bool RUNNING;
-
 const int LEVELS_PER_ROW = 5;
 const int SPACE_BETWEEN_LEVELS = 5;
-
-LevelProgression::LevelProgression() {
-    _load_progression();
-}
 
 void LevelProgression::_load_progression() {
     for (const auto& entry : std::filesystem::directory_iterator(LEVELS_DIR)) {
@@ -33,33 +26,39 @@ void LevelProgression::_load_progression() {
 State* LevelProgression::update() {
     switch(getch()) {
         CASE_UP_KEYS
-            selected_index = std::max(0, selected_index - LEVELS_PER_ROW);
+            application_state->selected_index = std::max(
+                0,
+                application_state->selected_index - LEVELS_PER_ROW
+            );
             break;
         CASE_DOWN_KEYS
-            selected_index = std::min(
+            application_state->selected_index = std::min(
                 static_cast<int>(levels.size()) - 1,
-                selected_index + LEVELS_PER_ROW
+                application_state->selected_index + LEVELS_PER_ROW
             );
             break;
         CASE_LEFT_KEYS
-            selected_index = std::max(0, selected_index - 1);
+            application_state->selected_index = std::max(
+                0,
+                application_state->selected_index - 1
+            );
             break;
         CASE_RIGHT_KEYS
-            selected_index = std::min(
+            application_state->selected_index = std::min(
                 static_cast<int>(levels.size()) - 1,
-                selected_index + 1
+                application_state->selected_index + 1
             );
             break;
         CASE_Q_KEYS
             Log::info("level progression :: goto menu");
             return menu;
         CASE_SELECT_KEYS {
-            if (selected_index > max_level_beaten) {
+            if (application_state->selected_index > application_state->max_level_beaten) {
                 Log::info(
                     std::format(
                         "level progression :: Locked level selection: {} > {}",
-                        selected_index,
-                        max_level_beaten
+                        application_state->selected_index,
+                        application_state->max_level_beaten
                     ).c_str()
                 );
 
@@ -74,14 +73,14 @@ State* LevelProgression::update() {
             Log::info(
                 std::format(
                     "level progression :: loading level: {}",
-                    levels[selected_index]
+                    levels[application_state->selected_index]
                 ).c_str()
             );
 
-            std::ifstream level_file(levels[selected_index]);
+            std::ifstream level_file(levels[application_state->selected_index]);
             if (!level_file.good()) {
-                std::cerr << "Could not open file: " << levels[selected_index] << std::endl;
-                RUNNING = false;
+                std::cerr << "Could not open file: " << levels[application_state->selected_index] << std::endl;
+                application_state->running = false;
             }
 
             std::vector<std::string> level;
@@ -97,8 +96,8 @@ State* LevelProgression::update() {
                 assert(level[i].size() == num_columns);
             }
 
-            sokoban_free(game->state);
-            sokoban_init_from_level(game->state, level);
+            sokoban_free(application_state->game_state);
+            sokoban_init_from_level(application_state->game_state, level);
 
             Log::info("level progression :: goto game");
             return game;
@@ -139,8 +138,8 @@ void LevelProgression::render() const {
             x += SPACE_BETWEEN_LEVELS;
         }
 
-        const bool level_unlocked = i <= max_level_beaten;
-        if (i == selected_index) {
+        const bool level_unlocked = i <= application_state->max_level_beaten;
+        if (i == application_state->selected_index) {
            color = level_unlocked ? unlocked_highlighted : locked_highlighted;
         } else {
             color = level_unlocked ? unlocked_regular : locked_regular;

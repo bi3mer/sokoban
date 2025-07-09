@@ -1,14 +1,12 @@
 #pragma once
 
-#include "level_progression.hpp"
-#include "sokoban.hpp"
+#include "application_state.hpp"
 #include "state.hpp"
 
-struct LevelProgression;
 struct Game : State {
-    Sokoban state;
-    LevelProgression* level_progression;
+    State* level_progression;
 
+    Game(ApplicationState* state) : State(state) {};
     ~Game();
     State* update() override;
     void render() const override;
