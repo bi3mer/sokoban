@@ -1,8 +1,10 @@
 #include "game.hpp"
+#include "application_state.hpp"
 #include "key_macros.hpp"
 #include "sokoban.hpp"
 #include "log.hpp"
 
+#include <algorithm>
 #include <ctime>
 #include <format>
 #include <ncurses.h>
@@ -47,20 +49,34 @@ State* Game::update() {
 
     if (sokoban_game_over(app_state->game_state)) {
         Log::info("game :: player won");
+        const clock_t end = clock();
+        const double seconds_played = static_cast<double>(end - app_state->start_time) / CLOCKS_PER_SEC;
 
-        app_state->end_time = static_cast<double>(clock() - app_state->start_time) / CLOCKS_PER_SEC;
-
-        if (app_state->selected_index == app_state->max_level_beaten) {
-            ++app_state->max_level_beaten;
+        if (app_state->selected_index == app_state->level_data.size()) {
             Log::info(
                std::format(
                    "game :: unlocked level: {}",
-                   app_state->max_level_beaten
+                   app_state->level_data.size()
                ).c_str()
             );
 
-            app_state->save(); // auto-save
+            app_state->level_data.push_back({
+                .moves = app_state->moves,
+                .seconds_played = seconds_played
+            });
+
+            Log::info("game :: adding new level data to application state.");
+        } else {
+            // player replaying level, update moves and seconds played
+            LevelData& ld = app_state->level_data[app_state->selected_index];
+            ld.moves = std::min(ld.moves, app_state->moves);
+            ld.seconds_played = std::min(ld.seconds_played, seconds_played);
+
+            Log::info(std::format("game :: moves={}", ld.moves).c_str());
+            Log::info(std::format("game :: seconds_played={}", ld.seconds_played).c_str());
         }
+
+        app_state->save(); // auto-save
 
         // This is pretty terrible... add a game over application_state->game_state or something
         render();

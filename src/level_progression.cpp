@@ -53,12 +53,12 @@ State* LevelProgression::update() {
             Log::info("level progression :: goto menu");
             return menu;
         CASE_SELECT_KEYS {
-            if (app_state->selected_index > app_state->max_level_beaten) {
+            if (app_state->selected_index > app_state->level_data.size()) {
                 Log::info(
                     std::format(
                         "level progression :: Locked level selection: {} > {}",
                         app_state->selected_index,
-                        app_state->max_level_beaten
+                        app_state->level_data.size()
                     ).c_str()
                 );
 
@@ -140,7 +140,7 @@ void LevelProgression::render() const {
             x += SPACE_BETWEEN_LEVELS;
         }
 
-        const bool level_unlocked = i <= app_state->max_level_beaten;
+        const bool level_unlocked = i <= app_state->level_data.size();
         if (i == app_state->selected_index) {
            color = level_unlocked ? unlocked_highlighted : locked_highlighted;
         } else {

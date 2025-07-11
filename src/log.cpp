@@ -21,6 +21,11 @@ namespace Log {
         log_file.flush();
     }
 
+    void debug(const char* str) {
+        log_file << "DEBUG :: " << str << std::endl;
+        log_file.flush();
+    }
+
     void warn(const char* str) {
         log_file << "WARN :: " << str << std::endl;
         log_file.flush();
