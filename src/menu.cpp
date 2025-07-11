@@ -26,7 +26,7 @@ State* Menu::update() {
                     return instructions;
                 case 2:
                     Log::info("menu :: player exiting");
-                    application_state->running = false;
+                    app_state->running = false;
                     break;
                 default:
                     Log::warn(
@@ -48,7 +48,7 @@ State* Menu::update() {
             break;
         CASE_Q_KEYS
             Log::info("menu :: player quitting");
-            application_state->running = false;
+            app_state->running = false;
             break;
     }
 

@@ -26,39 +26,39 @@ void LevelProgression::_load_progression() {
 State* LevelProgression::update() {
     switch(getch()) {
         CASE_UP_KEYS
-            application_state->selected_index = std::max(
+            app_state->selected_index = std::max(
                 0,
-                application_state->selected_index - LEVELS_PER_ROW
+                app_state->selected_index - LEVELS_PER_ROW
             );
             break;
         CASE_DOWN_KEYS
-            application_state->selected_index = std::min(
+            app_state->selected_index = std::min(
                 static_cast<int>(levels.size()) - 1,
-                application_state->selected_index + LEVELS_PER_ROW
+                app_state->selected_index + LEVELS_PER_ROW
             );
             break;
         CASE_LEFT_KEYS
-            application_state->selected_index = std::max(
+            app_state->selected_index = std::max(
                 0,
-                application_state->selected_index - 1
+                app_state->selected_index - 1
             );
             break;
         CASE_RIGHT_KEYS
-            application_state->selected_index = std::min(
+            app_state->selected_index = std::min(
                 static_cast<int>(levels.size()) - 1,
-                application_state->selected_index + 1
+                app_state->selected_index + 1
             );
             break;
         CASE_Q_KEYS
             Log::info("level progression :: goto menu");
             return menu;
         CASE_SELECT_KEYS {
-            if (application_state->selected_index > application_state->max_level_beaten) {
+            if (app_state->selected_index > app_state->max_level_beaten) {
                 Log::info(
                     std::format(
                         "level progression :: Locked level selection: {} > {}",
-                        application_state->selected_index,
-                        application_state->max_level_beaten
+                        app_state->selected_index,
+                        app_state->max_level_beaten
                     ).c_str()
                 );
 
@@ -73,14 +73,14 @@ State* LevelProgression::update() {
             Log::info(
                 std::format(
                     "level progression :: loading level: {}",
-                    levels[application_state->selected_index]
+                    levels[app_state->selected_index]
                 ).c_str()
             );
 
-            std::ifstream level_file(levels[application_state->selected_index]);
+            std::ifstream level_file(levels[app_state->selected_index]);
             if (!level_file.good()) {
-                std::cerr << "Could not open file: " << levels[application_state->selected_index] << std::endl;
-                application_state->running = false;
+                std::cerr << "Could not open file: " << levels[app_state->selected_index] << std::endl;
+                app_state->running = false;
             }
 
             std::vector<std::string> level;
@@ -96,8 +96,10 @@ State* LevelProgression::update() {
                 assert(level[i].size() == num_columns);
             }
 
-            sokoban_free(application_state->game_state);
-            sokoban_init_from_level(application_state->game_state, level);
+            sokoban_free(app_state->game_state);
+            sokoban_init_from_level(app_state->game_state, level);
+            app_state->start_time = clock();
+            app_state->moves = 0;
 
             Log::info("level progression :: goto game");
             return game;
@@ -138,8 +140,8 @@ void LevelProgression::render() const {
             x += SPACE_BETWEEN_LEVELS;
         }
 
-        const bool level_unlocked = i <= application_state->max_level_beaten;
-        if (i == application_state->selected_index) {
+        const bool level_unlocked = i <= app_state->max_level_beaten;
+        if (i == app_state->selected_index) {
            color = level_unlocked ? unlocked_highlighted : locked_highlighted;
         } else {
             color = level_unlocked ? unlocked_regular : locked_regular;

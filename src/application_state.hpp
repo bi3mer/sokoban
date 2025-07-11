@@ -10,6 +10,12 @@ struct ApplicationState {
 
     int moves = 0;
     clock_t start_time;
+    double end_time = 0;
 
     Sokoban game_state;
+
+    ApplicationState();
+    ~ApplicationState();
+
+    void save();
 };

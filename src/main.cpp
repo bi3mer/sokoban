@@ -8,7 +8,6 @@
 #include "level_progression.hpp"
 #include "log.hpp"
 #include "menu.hpp"
-#include "save_system.hpp"
 #include "state.hpp"
 
 
@@ -60,10 +59,6 @@ int main(int argc, char* argv[]) {
     instructions.menu = &menu;
     game.level_progression = &level_progression;
 
-    // get max unlocked level from save data
-    application_state.max_level_beaten = ss_get_data();
-    std::cout << application_state.max_level_beaten << std::endl;
-
     // set first state
     State* state = &menu;
 
@@ -78,7 +73,6 @@ int main(int argc, char* argv[]) {
 
     // shutdown
     endwin();
-    ss_save_data(application_state.max_level_beaten);
     Log::close();
 
     return 0;
