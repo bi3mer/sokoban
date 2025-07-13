@@ -1,8 +1,8 @@
 #pragma once
 
 #include "sokoban.hpp"
+#include <chrono>
 #include <cstddef>
-#include <ctime>
 #include <vector>
 
 struct LevelData {
@@ -15,7 +15,7 @@ struct ApplicationState {
     int selected_index = 0;
 
     std::size_t moves = 0;
-    clock_t start_time;
+    std::chrono::steady_clock::time_point start_time;
     Sokoban game_state;
 
     std::vector<LevelData> level_data;

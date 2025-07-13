@@ -5,7 +5,7 @@
 #include "log.hpp"
 
 #include <algorithm>
-#include <ctime>
+#include <chrono>
 #include <format>
 #include <ncurses.h>
 
@@ -35,7 +35,7 @@ State* Game::update() {
         case 'r':
             Log::info("game :: restart");
             app_state->moves = 0;
-            app_state->start_time = clock();
+            app_state->start_time = std::chrono::steady_clock::now();
             sokoban_restart(app_state->game_state);
             break;
         CASE_Q_KEYS
@@ -49,8 +49,11 @@ State* Game::update() {
 
     if (sokoban_game_over(app_state->game_state)) {
         Log::info("game :: player won");
-        const clock_t end = clock();
-        const double seconds_played = static_cast<double>(end - app_state->start_time) / CLOCKS_PER_SEC;
+        const auto  end = std::chrono::steady_clock::now();
+        const double ms_played = std::chrono::duration_cast<std::chrono::milliseconds>(
+            end - app_state->start_time
+        ).count();
+        const double seconds_played = std::ceil(ms_played * 0.001 * 100.0) / 100.0;
 
         if (app_state->selected_index == app_state->level_data.size()) {
             Log::info(
