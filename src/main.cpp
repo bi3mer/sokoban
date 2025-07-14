@@ -1,9 +1,7 @@
 #include <cassert>
 #include <cstring>
-#include <iostream>
 #include <ncurses.h>
 
-#include "PooledLinkedList.hpp"
 #include "constants.hpp"
 #include "game.hpp"
 #include "instructions.hpp"
@@ -14,35 +12,6 @@
 
 
 int main(int argc, char* argv[]) {
-    // @TEMP: linked list testing cod
-    PooledLinkedList<int> ll;
-
-    for (int i = 0; i < 10; ++i) {
-        ll.push(i);
-    }
-
-    PooledNode<int>* temp = ll.tail;
-    while (temp != nullptr) {
-        std::cout << temp->data << std::endl;
-        temp = temp->previous;
-    }
-
-    std::cout << "===============" << std::endl;
-
-    ll.remove_tail();
-    ll.remove_tail();
-    std::cout << "===============" << std::endl;
-
-    temp = ll.tail;
-    while (temp != nullptr) {
-        std::cout << temp->data << std::endl;
-        temp = temp->previous;
-    }
-    std::cout << "===============" << std::endl;
-
-    std::cout << ll.size << std::endl;
-
-
     /////////////////////////////////////////////////////////
     /// Initialize logger and state
     Log::init();
