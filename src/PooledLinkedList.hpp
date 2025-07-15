@@ -34,6 +34,9 @@ struct PooledLinkedList {
             front = front->next;
             delete temp;
         }
+
+        front = nullptr;
+        back = nullptr;
     }
 
     void push_front(T data) {
@@ -86,23 +89,22 @@ struct PooledLinkedList {
     }
 
     T pop_front() {
-        std::cout << "front is null: " << (front == nullptr) << std::endl;
         assert(front != nullptr);
 
-        if (size == 1) {
-            T temp = front->data;
+        T data = front->data;
+        --size;
+
+        if (front == back) {
             delete front;
             front = nullptr;
-            return temp;
+            back = nullptr;
+        } else {
+            PoolNode<T>* temp = front;
+            front = front->next;
+            front->previous = nullptr;
+
+            delete temp;
         }
-
-        --size;
-        PoolNode<T>* temp = front;
-        front = front->next;
-        front->previous = nullptr;
-
-        T data = front->data;
-        delete temp;
 
         return data;
     }
@@ -110,13 +112,20 @@ struct PooledLinkedList {
     T pop_back() {
         assert(back != nullptr);
 
-        --size;
-        PoolNode<T>* temp = back;
-        back = back->previous;
-        back->next = nullptr;
-
         T data = back->data;
-        delete temp;
+        --size;
+
+        if (front == back) {
+            delete back;
+            front = nullptr;
+            back = nullptr;
+        } else {
+            PoolNode<T>* temp = back;
+            back = back->previous;
+            back->next = nullptr;
+
+            delete temp;
+        }
 
         return data;
     }

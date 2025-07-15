@@ -4,6 +4,7 @@
 #include <vector>
 #include <assert.h>
 
+#include "command.hpp"
 #include "point.hpp"
 #include "bit_operations.hpp"
 
@@ -55,6 +56,6 @@ inline bool sokoban_is_switch(const Sokoban& state, Point p) {
 void sokoban_init_from_level(Sokoban&, const std::vector<std::string>&);
 bool sokoban_game_over(const Sokoban&);
 void sokoban_restart(Sokoban&);
-void sokoban_update(Sokoban&, const Point&);
-void sokoban_undo(Sokoban&, const Point&);
+Command sokoban_update(Sokoban&, const Point&);
+void sokoban_undo(Sokoban&, const Command&);
 void sokoban_free(Sokoban&);

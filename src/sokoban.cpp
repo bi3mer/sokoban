@@ -1,4 +1,6 @@
 #include "sokoban.hpp"
+#include "command.hpp"
+#include "point.hpp"
 #include <cstring>
 #include <iostream>
 
@@ -65,43 +67,59 @@ void sokoban_restart(Sokoban& state) {
     state.player = state.original_player;
 }
 
-void sokoban_update(Sokoban& state, const Point& dir) {
-    const Point player_pos = point_add(state.player, dir);
+Command sokoban_update(Sokoban& state, const Point& direction) {
+    const Point player_pos = point_add(state.player, direction);
+    Command command = {
+        .moved_block = false,
+        .player_direction = { 0, 0 }
+    };
 
     // check the bounds
-    if (player_pos.x < 0 || player_pos.x >= state.columns) return;
-    if (player_pos.y < 0 || player_pos.y >= state.rows) return;
+    if (player_pos.x < 0 || player_pos.x >= state.columns) return command;
+    if (player_pos.y < 0 || player_pos.y >= state.rows) return command;
 
     // check if the player is going to run into the wall
-    if (sokoban_is_solid(state, player_pos)) return;
+    if (sokoban_is_solid(state, player_pos)) return command;
 
     // handle blocks
     if (sokoban_is_block(state, player_pos)) {
-        const Point block_pos = point_add(player_pos, dir);
+        const Point block_pos = point_add(player_pos, direction);
 
         // check bounds for the block
-        if (block_pos.x < 0 || block_pos.x >= state.columns) return;
-        if (block_pos.y < 0 || block_pos.y >= state.rows) return;
+        if (block_pos.x < 0 || block_pos.x >= state.columns) return command;
+        if (block_pos.y < 0 || block_pos.y >= state.rows) return command;
 
         // make sure spot is not a block or a solid
-        if (sokoban_is_block(state, block_pos) || sokoban_is_solid(state, block_pos)) return;
+        if (sokoban_is_block(state, block_pos) || sokoban_is_solid(state, block_pos)) return command;
 
         // update block position
         sokoban_set_block(state, block_pos);
         sokoban_clear_block(state, player_pos);
         state.player = player_pos;
+
+        command.moved_block = true;
+        command.player_direction = direction;
     } else {
         state.player = player_pos;
+        command.player_direction = direction;
     }
+
+    return command;
 }
 
-void sokoban_undo(Sokoban& state, const Point& p) {
-    const Point undo = {
-        .x = -p.x,
-        .y = -p.y
+void sokoban_undo(Sokoban& state, const Command& command) {
+    const Point undo_direction = {
+        .x = -command.player_direction.x,
+        .y = -command.player_direction.y
     };
 
-    sokoban_update(state, undo);
+    const Point original_player_position = state.player;
+    sokoban_update(state, undo_direction);
+
+    if (command.moved_block) {
+        sokoban_set_block(state, original_player_position);
+        sokoban_clear_block(state, point_add(original_player_position, command.player_direction));
+    }
 }
 
 void sokoban_free(Sokoban& state) {

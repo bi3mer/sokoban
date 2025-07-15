@@ -17,23 +17,19 @@ State* Game::update() {
     switch (getch()) {
         CASE_UP_KEYS
             ++app_state->moves;
-            commands.push_back({0,-1});
-            sokoban_update(app_state->game_state, commands.back->data);
+            commands.push_back(sokoban_update(app_state->game_state, {0, -1}));
             break;
         CASE_LEFT_KEYS
             ++app_state->moves;
-            commands.push_back({-1,0});
-            sokoban_update(app_state->game_state, commands.back->data);
+            commands.push_back(sokoban_update(app_state->game_state, {-1, 0}));
             break;
         CASE_DOWN_KEYS
             ++app_state->moves;
-            commands.push_back({0,1});
-            sokoban_update(app_state->game_state, commands.back->data);
+            commands.push_back(sokoban_update(app_state->game_state, {0, 1}));
             break;
         CASE_RIGHT_KEYS
             ++app_state->moves;
-            commands.push_back({1,0});
-            sokoban_update(app_state->game_state, commands.back->data);
+            commands.push_back(sokoban_update(app_state->game_state, {1, 0}));
             break;
         case 'R':
         case 'r':
@@ -115,16 +111,6 @@ inline void _ui_draw_char(const char c) {
 
 void Game::render() const {
     clear();
-
-    // @TODO: remove
-    if (commands.size > 0) {
-        move(0,0);
-        const Point p = commands.back->data;
-        printw("%zu, %i, %i", commands.size, p.x, p.y);
-
-        move(1, 0);
-        printw("moves: %zu", app_state->moves);
-    }
 
     int max_x, max_y;
     getmaxyx(stdscr, max_y, max_x);

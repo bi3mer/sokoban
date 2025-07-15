@@ -1,9 +1,7 @@
 #include <cassert>
 #include <cstring>
-#include <iostream>
 #include <ncurses.h>
 
-#include "PooledLinkedList.hpp"
 #include "constants.hpp"
 #include "game.hpp"
 #include "instructions.hpp"
@@ -14,17 +12,6 @@
 
 
 int main(int argc, char* argv[]) {
-    // @TODO: we need to fix this case for our linked list
-    // PooledLinkedList<int> ll;
-    // for(int i = 0; i < 10; ++i) {
-    //     ll.push_front(i);
-    // }
-
-    // while (ll.front != nullptr) {
-    //     std::cout << ll.pop_front() << std::endl;
-    // }
-
-    // return 0;
     /////////////////////////////////////////////////////////
     /// Initialize logger and state
     Log::init();
