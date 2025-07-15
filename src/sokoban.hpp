@@ -56,4 +56,5 @@ void sokoban_init_from_level(Sokoban&, const std::vector<std::string>&);
 bool sokoban_game_over(const Sokoban&);
 void sokoban_restart(Sokoban&);
 void sokoban_update(Sokoban&, const Point&);
+void sokoban_undo(Sokoban&, const Point&);
 void sokoban_free(Sokoban&);

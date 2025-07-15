@@ -17,29 +17,42 @@ State* Game::update() {
     switch (getch()) {
         CASE_UP_KEYS
             ++app_state->moves;
-            sokoban_update(app_state->game_state, {0,-1});
+            commands.push_back({0,-1});
+            sokoban_update(app_state->game_state, commands.back->data);
             break;
         CASE_LEFT_KEYS
             ++app_state->moves;
-            sokoban_update(app_state->game_state, {-1,0});
+            commands.push_back({-1,0});
+            sokoban_update(app_state->game_state, commands.back->data);
             break;
         CASE_DOWN_KEYS
             ++app_state->moves;
-            sokoban_update(app_state->game_state, {0,1});
+            commands.push_back({0,1});
+            sokoban_update(app_state->game_state, commands.back->data);
             break;
         CASE_RIGHT_KEYS
             ++app_state->moves;
-            sokoban_update(app_state->game_state, {1,0});
+            commands.push_back({1,0});
+            sokoban_update(app_state->game_state, commands.back->data);
             break;
         case 'R':
         case 'r':
             Log::info("game :: restart");
             app_state->moves = 0;
             app_state->start_time = std::chrono::steady_clock::now();
+            commands.clear();
             sokoban_restart(app_state->game_state);
+            break;
+        case 'U':
+        case 'u':
+            if (commands.size > 0) {
+                app_state->moves = std::max(app_state->moves-1, 0);
+                sokoban_undo(app_state->game_state, commands.pop_back());
+            }
             break;
         CASE_Q_KEYS
             sokoban_restart(app_state->game_state);
+            commands.clear();
             Log::info("game :: player quit");
             Log::info("game :: goto level progression");
             return level_progression;
@@ -102,6 +115,16 @@ inline void _ui_draw_char(const char c) {
 
 void Game::render() const {
     clear();
+
+    // @TODO: remove
+    if (commands.size > 0) {
+        move(0,0);
+        const Point p = commands.back->data;
+        printw("%zu, %i, %i", commands.size, p.x, p.y);
+
+        move(1, 0);
+        printw("moves: %zu", app_state->moves);
+    }
 
     int max_x, max_y;
     getmaxyx(stdscr, max_y, max_x);

@@ -1,6 +1,9 @@
 #pragma once
 
 #include <cstddef>
+#include <cassert>
+
+#include <iostream>
 
 template <typename T>
 struct PoolNode {
@@ -80,5 +83,41 @@ struct PooledLinkedList {
         back->next = nullptr;
 
         delete temp;
+    }
+
+    T pop_front() {
+        std::cout << "front is null: " << (front == nullptr) << std::endl;
+        assert(front != nullptr);
+
+        if (size == 1) {
+            T temp = front->data;
+            delete front;
+            front = nullptr;
+            return temp;
+        }
+
+        --size;
+        PoolNode<T>* temp = front;
+        front = front->next;
+        front->previous = nullptr;
+
+        T data = front->data;
+        delete temp;
+
+        return data;
+    }
+
+    T pop_back() {
+        assert(back != nullptr);
+
+        --size;
+        PoolNode<T>* temp = back;
+        back = back->previous;
+        back->next = nullptr;
+
+        T data = back->data;
+        delete temp;
+
+        return data;
     }
 };

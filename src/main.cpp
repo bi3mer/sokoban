@@ -14,40 +14,17 @@
 
 
 int main(int argc, char* argv[]) {
-    PooledLinkedList<int> ll;
-    for(int i = 0; i < 10; ++i) {
-        ll.push_back(i);
-    }
-    ll.push_front(-1);
+    // @TODO: we need to fix this case for our linked list
+    // PooledLinkedList<int> ll;
+    // for(int i = 0; i < 10; ++i) {
+    //     ll.push_front(i);
+    // }
 
-    PoolNode<int>* temp = ll.front;
-    while (temp != nullptr) {
-        std::cout << temp->data << std::endl;
-        temp = temp->next;
-    }
+    // while (ll.front != nullptr) {
+    //     std::cout << ll.pop_front() << std::endl;
+    // }
 
-    std::cout << "===========" << std::endl;
-
-    ll.remove_front();
-    ll.remove_back();
-    ll.remove_front();
-    ll.remove_back();
-
-    temp = ll.back;
-    while (temp != nullptr) {
-        std::cout << temp->data << std::endl;
-        temp = temp->previous;
-    }
-    std::cout << "===========" << std::endl;
-
-    temp = ll.front;
-    while (temp != nullptr) {
-        std::cout << temp->data << std::endl;
-        temp = temp->next;
-    }
-
-    return 0;
-
+    // return 0;
     /////////////////////////////////////////////////////////
     /// Initialize logger and state
     Log::init();

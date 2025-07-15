@@ -95,6 +95,15 @@ void sokoban_update(Sokoban& state, const Point& dir) {
     }
 }
 
+void sokoban_undo(Sokoban& state, const Point& p) {
+    const Point undo = {
+        .x = -p.x,
+        .y = -p.y
+    };
+
+    sokoban_update(state, undo);
+}
+
 void sokoban_free(Sokoban& state) {
     if (state.original_blocks == nullptr) {
         free(state.original_blocks);

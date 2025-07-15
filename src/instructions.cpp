@@ -6,14 +6,16 @@
 #include <cstring>
 #include <ncurses.h>
 
-const std::size_t INSTRUCTIONS_SIZE = 8;
+const std::size_t INSTRUCTIONS_SIZE = 10;
 const char* INSTRUCTIONS[INSTRUCTIONS_SIZE] = {
     "Move blocks ('b') over switches ('.') to win!",
+    "",
     "W to move up",
     "A to move left",
     "S to move down",
     "D to move right",
     " ",
+    "U to undo",
     "R to restart",
     "Q to quit",
 };

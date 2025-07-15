@@ -6,7 +6,7 @@
 #include <vector>
 
 struct LevelData {
-    std::size_t moves = 0;
+    int moves = 0;
     double seconds_played = 0;
 };
 
@@ -14,7 +14,7 @@ struct ApplicationState {
     bool running = true;
     int selected_index = 0;
 
-    std::size_t moves = 0;
+    int moves = 0;
     std::chrono::steady_clock::time_point start_time;
     Sokoban game_state;
 
