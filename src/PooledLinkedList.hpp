@@ -1,9 +1,8 @@
 #pragma once
 
+#include "object_pool.hpp"
 #include <cstddef>
 #include <cassert>
-
-#include <iostream>
 
 template <typename T>
 struct PoolNode {
@@ -11,6 +10,7 @@ struct PoolNode {
     PoolNode<T>* next;
     T data;
 
+    PoolNode<T>() : previous(nullptr), next(nullptr) {}
     PoolNode<T>(T value) : previous(nullptr), next(nullptr), data(value) {}
 };
 
@@ -19,8 +19,11 @@ struct PooledLinkedList {
     std::size_t size;
     PoolNode<T>* front;
     PoolNode<T>* back;
+    ObjectPool<PoolNode<T>> pool;
 
-    PooledLinkedList<T>() : size(0), front(nullptr), back(nullptr) {}
+    PooledLinkedList<T>() : size(0), front(nullptr), back(nullptr) {
+        pool.alloc_more(20);
+    }
 
     ~PooledLinkedList<T>() {
         clear();
@@ -30,9 +33,9 @@ struct PooledLinkedList {
         size = 0;
 
         while (front != nullptr) {
-            PoolNode<T>* temp = front;
+            PoolNode<T>* object = front;
             front = front->next;
-            delete temp;
+            pool.return_object(object);
         }
 
         front = nullptr;
@@ -42,7 +45,9 @@ struct PooledLinkedList {
     void push_front(T data) {
         ++size;
 
-        PoolNode<T>* new_node = new PoolNode<T>(data);
+        PoolNode<T>* new_node = pool.get_object();
+        new_node->data = data;
+
         if (front == nullptr) {
             front = new_node;
             back = new_node;
@@ -56,7 +61,9 @@ struct PooledLinkedList {
     void push_back(T data) {
         ++size;
 
-        PoolNode<T>* new_node = new PoolNode<T>(data);
+        PoolNode<T>* new_node = pool.get_object();
+        new_node->data = data;
+
         if (back == nullptr) {
             front = new_node;
             back = new_node;
@@ -71,21 +78,22 @@ struct PooledLinkedList {
         if (front == nullptr) return;
 
         --size;
-        PoolNode<T>* temp = front;
+        PoolNode<T>* object = front;
         front = front->next;
         front->previous = nullptr;
-        delete temp;
+
+        pool.return_object(object);
     }
 
     void remove_back() {
         if (back == nullptr) return;
 
         --size;
-        PoolNode<T>* temp = back;
+        PoolNode<T>* object = back;
         back = back->previous;
         back->next = nullptr;
 
-        delete temp;
+        pool.return_object(object);
     }
 
     T pop_front() {
@@ -95,15 +103,16 @@ struct PooledLinkedList {
         --size;
 
         if (front == back) {
-            delete front;
+            pool.return_object(front);
+
             front = nullptr;
             back = nullptr;
         } else {
-            PoolNode<T>* temp = front;
+            PoolNode<T>* object = front;
             front = front->next;
             front->previous = nullptr;
 
-            delete temp;
+            pool.return_object(object);
         }
 
         return data;
@@ -116,15 +125,16 @@ struct PooledLinkedList {
         --size;
 
         if (front == back) {
-            delete back;
+            pool.return_object(back);
+
             front = nullptr;
             back = nullptr;
         } else {
-            PoolNode<T>* temp = back;
+            PoolNode<T>* object = back;
             back = back->previous;
             back->next = nullptr;
 
-            delete temp;
+            pool.return_object(object);
         }
 
         return data;
