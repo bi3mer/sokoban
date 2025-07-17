@@ -6,6 +6,7 @@
 #include "log.hpp"
 
 #include <chrono>
+#include <cmath>
 #include <cstdio>
 #include <cstring>
 #include <format>
@@ -19,6 +20,7 @@
 #include <filesystem>
 
 const int LEVELS_PER_ROW = 5;
+const int RENDER_ROWS = 6;
 const int SPACE_BETWEEN_LEVELS = 5;
 
 void LevelProgression::_load_progression() {
@@ -118,6 +120,9 @@ State* LevelProgression::update() {
             break;
     }
 
+    const int levels_per_window = LEVELS_PER_ROW * RENDER_ROWS;
+    render_start_row = std::floor(app_state->selected_index / (float)levels_per_window) * RENDER_ROWS;
+
     return this;
 }
 
@@ -183,7 +188,14 @@ void LevelProgression::render() const {
     int x = min_x;
     y += 2;
     int color;
-    for (std::size_t i = 0; i < levels.size(); ++i) {
+
+    int i = LEVELS_PER_ROW * render_start_row;
+    const int levels_to_render = std::min(
+        i + LEVELS_PER_ROW * RENDER_ROWS,
+        static_cast<int>(levels.size())
+    );
+
+    for (; i < levels_to_render; ++i) {
         if (i % LEVELS_PER_ROW == 0) {
             x = min_x;
             ++y;

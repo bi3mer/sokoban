@@ -5,9 +5,11 @@
 #include <cstddef>
 
 struct LevelProgression : State {
-    std::vector<std::string> levels;
     State* menu = nullptr;
     State* game = nullptr;
+
+    std::vector<std::string> levels;
+    int render_start_row = 0;
 
     LevelProgression(ApplicationState* state) : State(state) {
         _load_progression();

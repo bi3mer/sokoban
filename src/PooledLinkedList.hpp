@@ -33,8 +33,11 @@ struct PooledLinkedList {
 
         while (front != nullptr) {
             PoolNode<T>* object = front;
-            front = front->next;
             pool.return_object(object);
+
+            front = front->next;
+            object->previous = nullptr;
+            object->next = nullptr;
         }
 
         front = nullptr;
@@ -50,6 +53,9 @@ struct PooledLinkedList {
         if (front == nullptr) {
             front = new_node;
             back = new_node;
+
+            new_node->next = nullptr;
+            new_node->previous = nullptr;
         } else {
             new_node->next = front;
             front->previous = new_node;
@@ -66,6 +72,9 @@ struct PooledLinkedList {
         if (back == nullptr) {
             front = new_node;
             back = new_node;
+
+            new_node->next = nullptr;
+            new_node->previous = nullptr;
         } else {
             back->next = new_node;
             new_node->previous = back;
