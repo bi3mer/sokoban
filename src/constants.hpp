@@ -13,7 +13,9 @@ const int KEY_ESC = 27;
 const char * const LEVELS_DIR = "levels";
 const char * const SAVE_FILE = "save.txt";
 
-const std::size_t INITIAL_POOL_SIZE = 50;
+const std::size_t MAX_COMMANDS = 200;
+const std::size_t LEVEL_MAX_WIDTH = 50;
+const std::size_t LEVEL_MAX_HEIGHT = 50;
 
 char const * const MOVE_MESSAGE = "You beat your move record from %i to %i";
 char const * const TIME_MESSAGE = "You beat your time record from %.2f to %.2f";

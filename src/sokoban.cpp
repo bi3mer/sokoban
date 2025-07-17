@@ -1,23 +1,18 @@
 #include "sokoban.hpp"
 #include "command.hpp"
+#include "constants.hpp"
 #include "point.hpp"
 #include <cstring>
 #include <iostream>
 
 void sokoban_init_from_level(Sokoban& state, const std::vector<std::string>& level) {
+    memset(state.original_blocks, 0, LEVEL_MAX_WIDTH * LEVEL_MAX_HEIGHT / 8);
+    memset(state.blocks, 0, LEVEL_MAX_WIDTH * LEVEL_MAX_HEIGHT / 8);
+    memset(state.solids, 0, LEVEL_MAX_WIDTH * LEVEL_MAX_HEIGHT / 8);
+    memset(state.switches, 0, LEVEL_MAX_WIDTH * LEVEL_MAX_HEIGHT / 8);
+
     state.rows = level.size();
     state.columns = level[0].size();
-
-    const std::size_t num_bytes = (state.rows * state.columns + 7) / 8;
-
-    state.blocks = (unsigned char*) malloc(num_bytes);
-    memset(state.blocks, 0, num_bytes);
-
-    state.solids = (unsigned char*) malloc(num_bytes);
-    memset(state.solids, 0, num_bytes);
-
-    state.switches = (unsigned char*) malloc(num_bytes);
-    memset(state.switches, 0, num_bytes);
 
     Point p;
     for (p.y = 0; p.y < state.rows; ++p.y) {
@@ -50,9 +45,6 @@ void sokoban_init_from_level(Sokoban& state, const std::vector<std::string>& lev
             }
         }
     }
-
-    state.original_blocks = (unsigned char*) malloc(num_bytes);
-    memcpy(state.original_blocks, state.blocks, num_bytes);
 }
 
 bool sokoban_game_over(const Sokoban& state) {
@@ -119,14 +111,5 @@ void sokoban_undo(Sokoban& state, const Command& command) {
     if (command.moved_block) {
         sokoban_set_block(state, original_player_position);
         sokoban_clear_block(state, point_add(original_player_position, command.player_direction));
-    }
-}
-
-void sokoban_free(Sokoban& state) {
-    if (state.original_blocks == nullptr) {
-        free(state.original_blocks);
-        free(state.blocks);
-        free(state.solids);
-        free(state.switches);
     }
 }

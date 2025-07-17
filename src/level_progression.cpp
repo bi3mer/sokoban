@@ -1,5 +1,6 @@
 #include "level_progression.hpp"
 #include "application_state.hpp"
+#include "constants.hpp"
 #include "key_macros.hpp"
 #include "sokoban.hpp"
 #include "log.hpp"
@@ -96,12 +97,15 @@ State* LevelProgression::update() {
 
             level_file.close();
 
+            assert (level.size() <= LEVEL_MAX_HEIGHT);
+
             const std::size_t num_columns = level[0].size();
+            assert(num_columns <= LEVEL_MAX_WIDTH);
+
             for(std::size_t i = 1; i < level.size(); ++i) {
                 assert(level[i].size() == num_columns);
             }
 
-            sokoban_free(app_state->game_state);
             sokoban_init_from_level(app_state->game_state, level);
             app_state->start_time = std::chrono::steady_clock::now();
             app_state->moves = 0;

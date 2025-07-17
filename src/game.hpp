@@ -10,8 +10,8 @@ struct Game : State {
     State* level_progression;
     PooledLinkedList<Command> commands;
 
-    Game(ApplicationState* state) : State(state), commands(INITIAL_POOL_SIZE) {};
-    ~Game();
+    Game(ApplicationState* state) : State(state), commands(MAX_COMMANDS) {};
+
     State* update() override;
     void render() const override;
 };

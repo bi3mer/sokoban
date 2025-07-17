@@ -11,10 +11,6 @@
 #include <ncurses.h>
 #include <utility>
 
-Game::~Game() {
-    sokoban_free(app_state->game_state);
-}
-
 State* Game::update() {
     switch (getch()) {
         CASE_UP_KEYS
@@ -56,6 +52,11 @@ State* Game::update() {
             return level_progression;
         default:
             break;
+    }
+
+    if (commands.size >= MAX_COMMANDS) {
+        Log::info("game :: reached max commands, popping oldest command.");
+        commands.pop_front();
     }
 
     if (sokoban_game_over(app_state->game_state)) {
