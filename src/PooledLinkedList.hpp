@@ -21,9 +21,8 @@ struct PooledLinkedList {
     PoolNode<T>* back;
     ObjectPool<PoolNode<T>> pool;
 
-    PooledLinkedList<T>() : size(0), front(nullptr), back(nullptr) {
-        pool.alloc_more(20);
-    }
+    PooledLinkedList<T>() : size(0), front(nullptr), back(nullptr) {}
+    PooledLinkedList<T>(std::size_t pool_size) : size(0), front(nullptr), back(nullptr), pool(pool_size) {}
 
     ~PooledLinkedList<T>() {
         clear();

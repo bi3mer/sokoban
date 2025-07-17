@@ -1,19 +1,26 @@
 #pragma once
+#include <cstddef>
+#include <vector>
 
 #include "log.hpp"
-#include <vector>
 
 template<typename T>
 struct ObjectPool {
     std::vector<T*> pool;
 
-    ~ObjectPool<T>() {
+    ObjectPool() {};
+
+    ObjectPool(std::size_t initial_pool_size)  {
+       allocate_objects(initial_pool_size);
+    }
+
+    ~ObjectPool() {
         for (T* t : pool) {
             delete t;
         }
     }
 
-    void alloc_more(std::size_t size) {
+    void allocate_objects(std::size_t size) {
         for (std::size_t i = 0; i < size; ++i) {
             pool.push_back(new T());
         }

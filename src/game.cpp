@@ -1,5 +1,6 @@
 #include "game.hpp"
 #include "application_state.hpp"
+#include "constants.hpp"
 #include "key_macros.hpp"
 #include "sokoban.hpp"
 #include "log.hpp"
@@ -8,6 +9,7 @@
 #include <chrono>
 #include <format>
 #include <ncurses.h>
+#include <utility>
 
 Game::~Game() {
     sokoban_free(app_state->game_state);
@@ -81,8 +83,25 @@ State* Game::update() {
         } else {
             // player replaying level, update moves and seconds played
             LevelData& ld = app_state->level_data[app_state->selected_index];
-            ld.moves = std::min(ld.moves, app_state->moves);
-            ld.seconds_played = std::min(ld.seconds_played, seconds_played);
+
+            if (ld.moves > app_state->moves) {
+                std::swap(ld.moves, app_state->moves);
+                app_state->game_over_move_message = MOVE_MESSAGE;
+            } else {
+                app_state->game_over_move_message = nullptr;
+            }
+
+            if (ld.seconds_played > seconds_played) {
+                app_state->seconds_played_message = ld.seconds_played;
+                ld.seconds_played = seconds_played;
+
+                app_state->game_over_time_message = TIME_MESSAGE;
+            } else {
+                app_state->game_over_time_message = nullptr;
+            }
+
+            // ld.moves = std::min(ld.moves, app_state->moves);
+            // ld.seconds_played = std::min(ld.seconds_played, seconds_played);
 
             Log::info(std::format("game :: moves={}", ld.moves).c_str());
             Log::info(std::format("game :: seconds_played={}", ld.seconds_played).c_str());

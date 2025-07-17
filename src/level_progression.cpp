@@ -5,12 +5,15 @@
 #include "log.hpp"
 
 #include <chrono>
+#include <cstdio>
+#include <cstring>
 #include <format>
 #include <fstream>
 #include <algorithm>
 #include <cstddef>
 #include <iostream>
 #include <ncurses.h>
+#include <stdio.h>
 
 #include <filesystem>
 
@@ -142,6 +145,33 @@ void LevelProgression::render() const {
         move(y, (max_x - 36) / 2); // 17 is length of "Level Progression"
         const LevelData& ld = app_state->level_data[app_state->selected_index];
         printw("moves: %i, seconds to beat: %.2f", ld.moves, ld.seconds_played);
+    }
+
+    // render fewer moves for level by user if relevant
+    char buffer[50];
+    if (app_state->game_over_move_message != nullptr) {
+        y += 2;
+
+        const LevelData& ld = app_state->level_data[app_state->selected_index];
+        snprintf(buffer, 50, app_state->game_over_move_message, app_state->moves, ld.moves);
+
+        move(y, (max_x - strlen(buffer)) / 2);
+        printw(buffer);
+
+        app_state->game_over_move_message = nullptr;
+    }
+
+    // render less time played for level by user if relevant
+    if (app_state->game_over_time_message != nullptr) {
+        y += 2;
+
+        const LevelData& ld = app_state->level_data[app_state->selected_index];
+        snprintf(buffer, 50, app_state->game_over_time_message, app_state->seconds_played_message, ld.seconds_played);
+
+        move(y, (max_x - strlen(buffer)) / 2);
+        printw(buffer);
+
+        app_state->game_over_time_message = nullptr;
     }
 
     // render levels
