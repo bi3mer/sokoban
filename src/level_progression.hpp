@@ -16,6 +16,10 @@ struct LevelProgression : State {
     }
 
     void _load_progression();
+
+    void on_enter() override;
+    void on_exit() override;
+
     State* update() override;
     void render() const override;
 };

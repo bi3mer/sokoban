@@ -5,15 +5,12 @@
 #include "sokoban.hpp"
 #include "log.hpp"
 
-#include <chrono>
 #include <cmath>
 #include <cstdio>
 #include <cstring>
 #include <format>
-#include <fstream>
 #include <algorithm>
 #include <cstddef>
-#include <iostream>
 #include <ncurses.h>
 #include <stdio.h>
 
@@ -29,6 +26,14 @@ void LevelProgression::_load_progression() {
     }
 
     std::sort(levels.begin(), levels.end());
+}
+
+void LevelProgression::on_enter() {
+    Log::info("Level progression :: on_enter");
+}
+
+void LevelProgression::on_exit() {
+    Log::info("Level progression :: on_exit");
 }
 
 State* LevelProgression::update() {
@@ -75,7 +80,7 @@ State* LevelProgression::update() {
 
             if (sokoban_init_from_level(
                 app_state->game_state,
-                levels[app_state->selected_index].c_str())
+                levels[static_cast<std::size_t>(app_state->selected_index)].c_str())
             ) {
                 app_state->running = false;
                 return this;
@@ -89,7 +94,7 @@ State* LevelProgression::update() {
     }
 
     const int levels_per_window = LEVELS_PER_ROW * RENDER_ROWS;
-    render_start_row = std::floor(app_state->selected_index / (float)levels_per_window) * RENDER_ROWS;
+    render_start_row = static_cast<int>(std::floor(app_state->selected_index / (float)levels_per_window)) * RENDER_ROWS;
 
     return this;
 }
@@ -120,7 +125,7 @@ void LevelProgression::render() const {
         printw("Level not unlocked");
     } else {
         move(y, (max_x - 36) / 2); // 17 is length of "Level Progression"
-        const LevelData& ld = app_state->level_data[app_state->selected_index];
+        const LevelData& ld = app_state->level_data[static_cast<std::size_t>(app_state->selected_index)];
         printw("moves: %i, seconds to beat: %.2f", ld.moves, ld.seconds_played);
     }
 
@@ -129,10 +134,10 @@ void LevelProgression::render() const {
     if (app_state->game_over_move_message != nullptr) {
         y += 2;
 
-        const LevelData& ld = app_state->level_data[app_state->selected_index];
+        const LevelData& ld = app_state->level_data[static_cast<std::size_t>(app_state->selected_index)];
         snprintf(buffer, 50, app_state->game_over_move_message, app_state->moves, ld.moves);
 
-        move(y, (max_x - strlen(buffer)) / 2);
+        move(y, (max_x - static_cast<int>(strlen(buffer))) / 2);
         printw(buffer);
 
         app_state->game_over_move_message = nullptr;
@@ -142,10 +147,10 @@ void LevelProgression::render() const {
     if (app_state->game_over_time_message != nullptr) {
         y += 2;
 
-        const LevelData& ld = app_state->level_data[app_state->selected_index];
+        const LevelData& ld = app_state->level_data[static_cast<std::size_t>(app_state->selected_index)];
         snprintf(buffer, 50, app_state->game_over_time_message, app_state->seconds_played_message, ld.seconds_played);
 
-        move(y, (max_x - strlen(buffer)) / 2);
+        move(y, (max_x - static_cast<int>(strlen(buffer))) / 2);
         printw(buffer);
 
         app_state->game_over_time_message = nullptr;
@@ -179,7 +184,8 @@ void LevelProgression::render() const {
         }
 
         attron(color);
-        mvprintw(y, x, "%c%c", levels[i][7], levels[i][8]); // levels/XX.txt, xx in pos 7 and 8
+        const std::size_t size_t_i = static_cast<std::size_t>(i);
+        mvprintw(y, x, "%c%c", levels[size_t_i][7], levels[size_t_i][8]); // levels/XX.txt, xx in pos 7 and 8
         attroff(color);
     }
 }

@@ -10,6 +10,10 @@ struct Menu : State {
     State* instructions;
 
     Menu(ApplicationState* state) : State(state) {};
+
+    void on_enter() override;
+    void on_exit() override;
+
     State* update() override;
     void render() const override;
 };

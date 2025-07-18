@@ -20,6 +20,15 @@ const char* INSTRUCTIONS[INSTRUCTIONS_SIZE] = {
     "Q to quit",
 };
 
+
+void Instructions::on_enter() {
+    Log::info("Instructions :: on_enter");
+}
+
+void Instructions::on_exit() {
+    Log::info("Instructions :: on_enter");
+}
+
 State* Instructions::update() {
     switch(getch()) {
         CASE_SELECT_KEYS
@@ -39,7 +48,7 @@ void Instructions::render() const {
     int y = max_y / 5;
 
     for(std::size_t i = 0; i < INSTRUCTIONS_SIZE; ++i, ++y) {
-        move(y, (max_x - strlen(INSTRUCTIONS[i])) / 2);
+        move(y, (max_x - static_cast<int>(strlen(INSTRUCTIONS[i]))) / 2);
         printw(INSTRUCTIONS[i]);
     }
 

@@ -20,7 +20,7 @@ bool sokoban_init_from_level(Sokoban& state, char const * const level_path) {
     memset(state.solids, 0, LEVEL_MAX_WIDTH * LEVEL_MAX_HEIGHT / 8);
     memset(state.switches, 0, LEVEL_MAX_WIDTH * LEVEL_MAX_HEIGHT / 8);
 
-    std::ifstream file(level_path);
+    std::ifstream file(level_path, std::ios::binary);
     assert(file.is_open());
 
     Point p = {0, 0};
@@ -75,7 +75,7 @@ bool sokoban_init_from_level(Sokoban& state, char const * const level_path) {
 
     file.close();
 
-    state.rows = p.y + 1;
+    state.rows = static_cast<std::size_t>(p.y) + 1;
 
     return false;
 }

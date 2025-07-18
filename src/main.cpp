@@ -65,9 +65,19 @@ int main(int argc, char* argv[]) {
     /////////////////////////////////////////////////////////
     // loop
     Log::info("beginning game loop.");
+    State* temp;
+
+    state->on_enter();
     state->render();
     while (application_state.running) {
-        state = state->update();
+        temp = state->update();
+
+        if (temp != state) {
+            state->on_exit();
+            state = temp;
+            state->on_enter();
+        }
+
         state->render();
     }
 

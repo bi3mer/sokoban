@@ -23,7 +23,7 @@ struct Sokoban {
 };
 
 inline std::size_t sokoban_index(const Sokoban& state, Point p) {
-    return p.y * state.columns + p.x;
+    return static_cast<std::size_t>(p.y) * state.columns + static_cast<std::size_t>(p.x);
 }
 
 inline void sokoban_set_block(Sokoban& state, Point p) {

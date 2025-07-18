@@ -14,6 +14,14 @@ const char* MENU_OPTIONS[MENU_SIZE] = {
     "Exit",
 };
 
+void Menu::on_enter() {
+    Log::info("Menu :: on_enter");
+}
+
+void Menu::on_exit() {
+    Log::info("Menu :: on_exit");
+}
+
 State* Menu::update() {
     switch (getch()) {
         CASE_SELECT_KEYS
@@ -72,7 +80,7 @@ void Menu::render() const {
 
     int y = max_y / 2;
     for (std::size_t i = 0; i < MENU_SIZE; ++i) {
-        move(y, (max_x - strlen(MENU_OPTIONS[i])) / 2);
+        move(y, (max_x - static_cast<int>(strlen(MENU_OPTIONS[i]))) / 2);
         if (i == user_selection) {
             attron(highlighted);
             printw(MENU_OPTIONS[i]);

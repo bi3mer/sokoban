@@ -11,6 +11,18 @@
 #include <ncurses.h>
 #include <utility>
 
+void Game::on_enter() {
+    Log::info("Game :: on_enter");
+    app_state->moves = 0;
+    app_state->start_time = std::chrono::steady_clock::now();
+}
+
+void Game::on_exit() {
+    Log::info("Game :: on_exit");
+    sokoban_restart(app_state->game_state);
+    commands.clear();
+}
+
 State* Game::update() {
     switch (getch()) {
         CASE_UP_KEYS
@@ -32,10 +44,7 @@ State* Game::update() {
         case 'R':
         case 'r':
             Log::info("game :: restart");
-            app_state->moves = 0;
-            app_state->start_time = std::chrono::steady_clock::now();
-            commands.clear();
-            sokoban_restart(app_state->game_state);
+            on_enter();
             break;
         case 'U':
         case 'u':
@@ -45,8 +54,6 @@ State* Game::update() {
             }
             break;
         CASE_Q_KEYS
-            sokoban_restart(app_state->game_state);
-            commands.clear();
             Log::info("game :: player quit");
             Log::info("game :: goto level progression");
             return level_progression;
@@ -83,7 +90,7 @@ State* Game::update() {
             Log::info("game :: adding new level data to application state.");
         } else {
             // player replaying level, update moves and seconds played
-            LevelData& ld = app_state->level_data[app_state->selected_index];
+            LevelData& ld = app_state->level_data[static_cast<std::size_t>(app_state->selected_index)];
 
             if (ld.moves > app_state->moves) {
                 std::swap(ld.moves, app_state->moves);
@@ -101,8 +108,6 @@ State* Game::update() {
                 app_state->game_over_time_message = nullptr;
             }
 
-            // ld.moves = std::min(ld.moves, app_state->moves);
-            // ld.seconds_played = std::min(ld.seconds_played, seconds_played);
 
             Log::info(std::format("game :: moves={}", ld.moves).c_str());
             Log::info(std::format("game :: seconds_played={}", ld.seconds_played).c_str());
@@ -113,7 +118,6 @@ State* Game::update() {
         // This is pretty terrible... add a game over application_state->game_state or something
         render();
         getch(); // keypress so player can see game over application_state->game_state
-        sokoban_restart(app_state->game_state);
 
         Log::info("game :: goto level progression");
         return level_progression;
@@ -138,8 +142,8 @@ void Game::render() const {
     move(2, (max_x - 7) / 2);
     printw("Sokoban");
 
-    const int start_x = (max_x - app_state->game_state.columns) / 2;
-    const int start_y = (max_y - app_state->game_state.rows) / 2;
+    const int start_x = (max_x - static_cast<int>(app_state->game_state.columns)) / 2;
+    const int start_y = (max_y - static_cast<int>(app_state->game_state.rows)) / 2;
 
     Point p;
     for (p.y = 0; p.y < app_state->game_state.rows; ++p.y) {
