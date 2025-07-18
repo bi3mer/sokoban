@@ -1,7 +1,3 @@
-XXXX
-X@ X
-XbbX
-X  X
-X BX
-X..X
-XXXX
+XXXXXXXXXXX
+X.  b@b  .X
+XXXXXXXXXXX
