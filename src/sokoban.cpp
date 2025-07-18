@@ -1,50 +1,83 @@
 #include "sokoban.hpp"
 #include "command.hpp"
 #include "constants.hpp"
+#include "log.hpp"
 #include "point.hpp"
+#include <algorithm>
+#include <cassert>
 #include <cstring>
-#include <iostream>
+#include <fstream>
 
-void sokoban_init_from_level(Sokoban& state, const std::vector<std::string>& level) {
+bool sokoban_init_from_level(Sokoban& state, char const * const level_path) {
+    Log::info(
+        std::format("sokoban :: loading level: {}",level_path).c_str()
+    );
+
+    state.columns = 0;
+
     memset(state.original_blocks, 0, LEVEL_MAX_WIDTH * LEVEL_MAX_HEIGHT / 8);
     memset(state.blocks, 0, LEVEL_MAX_WIDTH * LEVEL_MAX_HEIGHT / 8);
     memset(state.solids, 0, LEVEL_MAX_WIDTH * LEVEL_MAX_HEIGHT / 8);
     memset(state.switches, 0, LEVEL_MAX_WIDTH * LEVEL_MAX_HEIGHT / 8);
 
-    state.rows = level.size();
-    state.columns = level[0].size();
+    std::ifstream file(level_path);
+    assert(file.is_open());
 
-    Point p;
-    for (p.y = 0; p.y < state.rows; ++p.y) {
-        const std::string& row = level[p.y];
-
-        for (p.x = 0; p.x < state.columns; ++p.x) {
-            switch (row[p.x]) {
-                case ' ':
-                    break;
-                case 'X':
-                    sokoban_set_solid(state, p);
-                    break;
-                case 'b':
-                    sokoban_set_block(state, p);
-                    break;
-                case '.':
-                    sokoban_set_switches(state, p);
-                    break;
-                case 'B':
-                    sokoban_set_block(state, p);
-                    sokoban_set_switches(state, p);
-                    break;
-                case '@':
-                    state.player = p;
-                    state.original_player = p;
-                    break;
-                default:
-                    std::cerr << "Unnknown tile type: " << row[p.x] << std::endl;
-                    assert(false);
-            }
+    Point p = {0, 0};
+    char byte;
+    while (file.get(byte)) {
+        switch (byte) {
+        case ' ':
+            ++p.x;
+            break;
+        case 'X':
+            sokoban_set_solid(state, p);
+            ++p.x;
+            break;
+        case 'b':
+            sokoban_set_block(state, p);
+            ++p.x;
+            break;
+        case '.':
+            sokoban_set_switches(state, p);
+            ++p.x;
+            break;
+        case 'B':
+            sokoban_set_block(state, p);
+            sokoban_set_switches(state, p);
+            ++p.x;
+            break;
+        case '@':
+            state.player = p;
+            state.original_player = p;
+            ++p.x;
+            break;
+        case '\n':
+            ++p.y;
+            p.x = 0;
+            break;
+        default:
+            Log::err(std::format("Unnknown tile type: {}", byte).c_str());
+            return true;
         }
+
+        if (p.x >= LEVEL_MAX_WIDTH || p.y >= LEVEL_MAX_HEIGHT) {
+            Log::err(std::format(
+                "{}: width={}, height={} -> limit exceeded.", level_path, p.x, p.y).c_str()
+            );
+
+            file.close();
+            return true;
+        }
+
+        state.columns = std::max(state.columns, static_cast<std::size_t>(p.x));
     }
+
+    file.close();
+
+    state.rows = p.y + 1;
+
+    return false;
 }
 
 bool sokoban_game_over(const Sokoban& state) {

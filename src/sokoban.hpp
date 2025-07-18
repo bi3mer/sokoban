@@ -54,7 +54,7 @@ inline bool sokoban_is_switch(const Sokoban& state, Point p) {
     return get_uchar_bit((unsigned char*) state.switches, sokoban_index(state, p));
 }
 
-void sokoban_init_from_level(Sokoban&, const std::vector<std::string>&);
+bool sokoban_init_from_level(Sokoban&, char const * const);
 bool sokoban_game_over(const Sokoban&);
 void sokoban_restart(Sokoban&);
 Command sokoban_update(Sokoban&, const Point&);

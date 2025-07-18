@@ -73,48 +73,16 @@ State* LevelProgression::update() {
                 break;
             }
 
-            ///////////////////////////////////////////////////////////////////
-            /// @TODO: this is bad placement, and should be part of Sokoboan,
-            /// but we aren't going to make any updates until we get to
-            /// improving the way files are read. Ideally, we should just pass
-            /// a file path to sokoban, and that's it.
-            Log::info(
-                std::format(
-                    "level progression :: loading level: {}",
-                    levels[app_state->selected_index]
-                ).c_str()
-            );
-
-            std::ifstream level_file(levels[app_state->selected_index]);
-            if (!level_file.good()) {
-                std::cerr << "Could not open file: " << levels[app_state->selected_index] << std::endl;
+            if (sokoban_init_from_level(
+                app_state->game_state,
+                levels[app_state->selected_index].c_str())
+            ) {
                 app_state->running = false;
+                return this;
             }
-
-            std::vector<std::string> level;
-            std::string line;
-            while(getline(level_file, line)) {
-                level.push_back(line);
-            }
-
-            level_file.close();
-
-            assert (level.size() <= LEVEL_MAX_HEIGHT);
-
-            const std::size_t num_columns = level[0].size();
-            assert(num_columns <= LEVEL_MAX_WIDTH);
-
-            for(std::size_t i = 1; i < level.size(); ++i) {
-                assert(level[i].size() == num_columns);
-            }
-
-            sokoban_init_from_level(app_state->game_state, level);
-            app_state->start_time = std::chrono::steady_clock::now();
-            app_state->moves = 0;
 
             Log::info("level progression :: goto game");
             return game;
-            ///////////////////////////////////////////////////////////////////
         }
         default:
             break;
