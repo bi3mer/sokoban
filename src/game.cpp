@@ -44,6 +44,8 @@ State* Game::update() {
         case 'R':
         case 'r':
             Log::info("game :: restart");
+            sokoban_restart(app_state->game_state);
+            commands.clear();
             on_enter();
             break;
         case 'U':

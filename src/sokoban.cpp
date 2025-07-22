@@ -15,10 +15,10 @@ bool sokoban_init_from_level(Sokoban& state, char const * const level_path) {
 
     state.columns = 0;
 
-    memset(state.original_blocks, 0, LEVEL_MAX_WIDTH * LEVEL_MAX_HEIGHT / 8);
-    memset(state.blocks, 0, LEVEL_MAX_WIDTH * LEVEL_MAX_HEIGHT / 8);
-    memset(state.solids, 0, LEVEL_MAX_WIDTH * LEVEL_MAX_HEIGHT / 8);
-    memset(state.switches, 0, LEVEL_MAX_WIDTH * LEVEL_MAX_HEIGHT / 8);
+    memset(state.original_blocks, 0, LEVEL_LENGTH);
+    memset(state.blocks, 0, LEVEL_LENGTH);
+    memset(state.solids, 0, LEVEL_LENGTH);
+    memset(state.switches, 0, LEVEL_LENGTH);
 
     std::ifstream file(level_path, std::ios::binary);
     assert(file.is_open());
@@ -75,6 +75,7 @@ bool sokoban_init_from_level(Sokoban& state, char const * const level_path) {
 
     file.close();
 
+    memcpy(state.original_blocks, state.blocks, LEVEL_LENGTH);
     state.rows = static_cast<std::size_t>(p.y) + 1;
 
     return false;

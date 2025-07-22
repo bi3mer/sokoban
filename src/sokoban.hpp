@@ -16,10 +16,10 @@ struct Sokoban {
     Point original_player;
 
     // divide by 8 because there are 8 bits in one unsigned char
-    unsigned char original_blocks[LEVEL_MAX_WIDTH * LEVEL_MAX_HEIGHT / 8];
-    unsigned char blocks[LEVEL_MAX_WIDTH * LEVEL_MAX_HEIGHT / 8];
-    unsigned char solids[LEVEL_MAX_WIDTH * LEVEL_MAX_HEIGHT / 8];
-    unsigned char switches[LEVEL_MAX_WIDTH * LEVEL_MAX_HEIGHT / 8];
+    unsigned char original_blocks[LEVEL_LENGTH];
+    unsigned char blocks[LEVEL_LENGTH];
+    unsigned char solids[LEVEL_LENGTH];
+    unsigned char switches[LEVEL_LENGTH];
 };
 
 inline std::size_t sokoban_index(const Sokoban& state, Point p) {
