@@ -1,11 +1,20 @@
 # Sokoban
 
-This is a reimplementation of [Sokoban](https://en.wikipedia.org/wiki/Sokoban) with bitboards and ncurses. To run, you first need to build it. If you do not have [ncurses](https://invisible-island.net/ncurses/) installed, then you first need to do that. On mac, it's pretty easy: `brew install ncurses`. It will also be fairly easy to get running on an Linux distro. However, I have no clue if you'll be able to get this game working on Windows.
+This is a reimplementation of [Sokoban](https://en.wikipedia.org/wiki/Sokoban) with bitboards and [ncurses](https://invisible-island.net/ncurses/).
 
 ## Building
 
+You need [ncurses.](https://invisible-island.net/ncurses/) On mac, it's pretty easy: `brew install ncurses`. It will also be fairly easy to get ncurses on any Linux distro (e.g., something along the lines of `sudo apt-get install ncurses-dev` if you are on Ubuntu). However, I have no clue how easy or not it will be to install ncurses for Windows or any other OS.
+
 ```bash
 make
+```
+
+## Running
+
+After the game is succesfully built, you can run the game with:
+
+```
 ./sokoban
 ```
 
