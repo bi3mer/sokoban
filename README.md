@@ -1,29 +1,14 @@
 # Sokoban
 
-This is a reimplementation of [Sokoban](https://en.wikipedia.org/wiki/Sokoban) with bitboards and ncurses. To run, you first need to build it. If you do not have [ncurses](https://invisible-island.net/ncurses/) installed, then you first need to do that. On mac, it is pretty easy: `brew install ncurses`.
+This is a reimplementation of [Sokoban](https://en.wikipedia.org/wiki/Sokoban) with bitboards and ncurses. To run, you first need to build it. If you do not have [ncurses](https://invisible-island.net/ncurses/) installed, then you first need to do that. On mac, it's pretty easy: `brew install ncurses`. It will also be fairly easy to get running on an Linux distro. However, I have no clue if you'll be able to get this game working on Windows.
 
 ## Building
 
 ```bash
-make build
-./a.out [[level-file]]
+make
+./sokoban
 ```
 
-An example of the `[[level-file]]` on mac/linux is `levels/level-0.txt`.
+## Other
 
-## Coding
-
-Instead of just coding the game, I decided to record multiple videos of me programming the game one step at a time:
-
-- [Part 1: Bitboards](https://youtu.be/1qzPr5OpPOE?si=1ijM4O0X8vE1O1u7)
-- [Part 2: ncurses](https://youtu.be/PHkmcQtTuxU?si=LB8c5zvodZrtva98)
-- [Part 3: Organization](https://www.youtube.com/watch?v=ZO7vgxL8Zqo)
-- [Part 4: Color and the Main Menu](https://www.youtube.com/watch?v=42ZuLIajps8)
-- [Part 5: Restarting](https://www.youtube.com/watch?v=WjEhLT4OZLk)
-- [Part 6: Menu Interaction](https://www.youtube.com/watch?v=CMHkWGfSPqg)
-- [Part 7: State Machine Basics](https://www.youtube.com/watch?v=GkINdTax_Eg)
-- [Part 8: Instructions](https://www.youtube.com/watch?v=pl2_XjE7QFA)
-- [Part 9: Level Progression](https://www.youtube.com/watch?v=kqlvHfFpcj4)
-- [Part 10: Grid View](https://www.youtube.com/watch?v=-jr-BNMy5K8)
-- [Part 11: Saving](https://www.youtube.com/watch?v=dbooT1yTtI0)
-- [Part 12: Logging](https://www.youtube.com/watch?v=UwbaxYBC5OI)
+Usually, I code a game and I have a repo to document the progress, and that is it. For this project, I went in a different direction and recorded myself while programming the whole thing. You can find the whole series on [YouTube.](https://www.youtube.com/watch?v=1qzPr5OpPOE&list=PLwaZncztKsRckZ0u3sKbwkZMtH1-ABkDR)
