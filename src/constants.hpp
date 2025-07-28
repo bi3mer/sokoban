@@ -16,7 +16,7 @@ const char * const SAVE_FILE = "save.txt";
 const std::size_t MAX_COMMANDS = 200;
 const std::size_t LEVEL_MAX_WIDTH = 50;
 const std::size_t LEVEL_MAX_HEIGHT = 50;
-const std::size_t LEVEL_LENGTH = LEVEL_MAX_WIDTH * LEVEL_MAX_HEIGHT / 8;
+const std::size_t LEVEL_LENGTH = LEVEL_MAX_WIDTH * LEVEL_MAX_HEIGHT;
 
 char const * const MOVE_MESSAGE = "You beat your move record from %i to %i";
 char const * const TIME_MESSAGE = "You beat your time record from %.2f to %.2f";

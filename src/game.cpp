@@ -138,29 +138,31 @@ inline void _ui_draw_char(const char c) {
 void Game::render() const {
     clear();
 
+    Sokoban& game = app_state->game_state;
+
     int max_x, max_y;
     getmaxyx(stdscr, max_y, max_x);
 
     move(2, (max_x - 7) / 2);
     printw("Sokoban");
 
-    const int start_x = (max_x - static_cast<int>(app_state->game_state.columns)) / 2;
-    const int start_y = (max_y - static_cast<int>(app_state->game_state.rows)) / 2;
+    const int start_x = (max_x - static_cast<int>(game.columns)) / 2;
+    const int start_y = (max_y - static_cast<int>(game.rows)) / 2;
 
     Point p;
-    for (p.y = 0; p.y < app_state->game_state.rows; ++p.y) {
-        const bool player_y = app_state->game_state.player.y == p.y;
+    for (p.y = 0; p.y < game.rows; ++p.y) {
+        const bool player_y = game.player.y == p.y;
 
-        for(p.x = 0; p.x < app_state->game_state.columns; ++p.x) {
+        for(p.x = 0; p.x < game.columns; ++p.x) {
             move(start_y + p.y, start_x + p.x);
 
-            if (player_y && app_state->game_state.player.x == p.x) {
+            if (player_y && game.player.x == p.x) {
                 _ui_draw_char('@');
-            } else if (sokoban_is_solid(app_state->game_state, p)) {
+            } else if (game.solids[sokoban_index(game, p)]) {
                 _ui_draw_char('X');
             } else {
-                const bool is_block = sokoban_is_block(app_state->game_state, p);
-                const bool is_switch = sokoban_is_switch(app_state->game_state, p);
+                const bool is_block = game.blocks[sokoban_index(game, p)];
+                const bool is_switch = game.switches[sokoban_index(game, p)];
 
                 if (is_block && is_switch) {
                     _ui_draw_char('B');

@@ -1,13 +1,12 @@
 #pragma once
 
+#include <bitset>
 #include <cstddef>
-#include <vector>
 #include <assert.h>
 
 #include "command.hpp"
 #include "constants.hpp"
 #include "point.hpp"
-#include "bit_operations.hpp"
 
 struct Sokoban {
     std::size_t rows = 0;
@@ -16,42 +15,14 @@ struct Sokoban {
     Point original_player;
 
     // divide by 8 because there are 8 bits in one unsigned char
-    unsigned char original_blocks[LEVEL_LENGTH];
-    unsigned char blocks[LEVEL_LENGTH];
-    unsigned char solids[LEVEL_LENGTH];
-    unsigned char switches[LEVEL_LENGTH];
+    std::bitset<LEVEL_LENGTH> original_blocks;
+    std::bitset<LEVEL_LENGTH> blocks;
+    std::bitset<LEVEL_LENGTH> solids;
+    std::bitset<LEVEL_LENGTH> switches;
 };
 
 inline std::size_t sokoban_index(const Sokoban& state, Point p) {
     return static_cast<std::size_t>(p.y) * state.columns + static_cast<std::size_t>(p.x);
-}
-
-inline void sokoban_set_block(Sokoban& state, Point p) {
-    set_uchar_bit(state.blocks, sokoban_index(state, p));
-}
-
-inline void sokoban_clear_block(Sokoban& state, Point p) {
-    clear_uchar_bit(state.blocks, sokoban_index(state, p));
-}
-
-inline bool sokoban_is_block(const Sokoban& state, Point p) {
-    return get_uchar_bit((unsigned char*) state.blocks, sokoban_index(state, p));
-}
-
-inline void sokoban_set_solid(Sokoban& state, Point p) {
-    set_uchar_bit(state.solids, sokoban_index(state, p));
-}
-
-inline bool sokoban_is_solid(const Sokoban& state, Point p) {
-    return get_uchar_bit((unsigned char*) state.solids, sokoban_index(state, p));
-}
-
-inline void sokoban_set_switches(Sokoban& state, Point p) {
-    set_uchar_bit(state.switches, sokoban_index(state, p));
-}
-
-inline bool sokoban_is_switch(const Sokoban& state, Point p) {
-    return get_uchar_bit((unsigned char*) state.switches, sokoban_index(state, p));
 }
 
 bool sokoban_init_from_level(Sokoban&, char const * const);

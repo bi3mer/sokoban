@@ -5,8 +5,10 @@
 #include "point.hpp"
 #include <algorithm>
 #include <cassert>
+#include <cstddef>
 #include <cstring>
 #include <fstream>
+#include <iterator>
 
 bool sokoban_init_from_level(Sokoban& state, char const * const level_path) {
     Log::info(
@@ -15,10 +17,10 @@ bool sokoban_init_from_level(Sokoban& state, char const * const level_path) {
 
     state.columns = 0;
 
-    memset(state.original_blocks, 0, LEVEL_LENGTH);
-    memset(state.blocks, 0, LEVEL_LENGTH);
-    memset(state.solids, 0, LEVEL_LENGTH);
-    memset(state.switches, 0, LEVEL_LENGTH);
+    state.original_blocks.reset();
+    state.blocks.reset();
+    state.solids.reset();
+    state.switches.reset();
 
     std::ifstream file(level_path, std::ios::binary);
     assert(file.is_open());
@@ -31,20 +33,20 @@ bool sokoban_init_from_level(Sokoban& state, char const * const level_path) {
             ++p.x;
             break;
         case 'X':
-            sokoban_set_solid(state, p);
+            state.solids.set(sokoban_index(state, p));
             ++p.x;
             break;
         case 'b':
-            sokoban_set_block(state, p);
+            state.blocks.set(sokoban_index(state, p));
             ++p.x;
             break;
         case '.':
-            sokoban_set_switches(state, p);
+            state.switches.set(sokoban_index(state, p));
             ++p.x;
             break;
         case 'B':
-            sokoban_set_block(state, p);
-            sokoban_set_switches(state, p);
+            state.blocks.set(sokoban_index(state, p));
+            state.switches.set(sokoban_index(state, p));
             ++p.x;
             break;
         case '@':
@@ -75,26 +77,24 @@ bool sokoban_init_from_level(Sokoban& state, char const * const level_path) {
 
     file.close();
 
-    memcpy(state.original_blocks, state.blocks, LEVEL_LENGTH);
+    state.original_blocks = state.blocks;
     state.rows = static_cast<std::size_t>(p.y) + 1;
 
     return false;
 }
 
 bool sokoban_game_over(const Sokoban& state) {
-    const std::size_t num_bytes = (state.rows * state.columns + 7) / 8;
-    return !memcmp(state.switches, state.blocks, num_bytes);
+    return state.switches == state.blocks;
 }
 
 void sokoban_restart(Sokoban& state) {
-    const std::size_t num_bytes = (state.rows * state.columns + 7) / 8;
-    memcpy(state.blocks, state.original_blocks, num_bytes);
-
+    state.original_blocks = state.blocks;
     state.player = state.original_player;
 }
 
 Command sokoban_update(Sokoban& state, const Point& direction) {
     const Point player_pos = point_add(state.player, direction);
+    const std::size_t player_pos_index = sokoban_index(state, player_pos);
     Command command = {
         .moved_block = false,
         .player_direction = { 0, 0 }
@@ -105,22 +105,24 @@ Command sokoban_update(Sokoban& state, const Point& direction) {
     if (player_pos.y < 0 || player_pos.y >= state.rows) return command;
 
     // check if the player is going to run into the wall
-    if (sokoban_is_solid(state, player_pos)) return command;
+    if (state.solids[player_pos_index]) return command;
 
     // handle blocks
-    if (sokoban_is_block(state, player_pos)) {
+    if (state.blocks[player_pos_index]) {
         const Point block_pos = point_add(player_pos, direction);
+        const std::size_t block_pos_index = sokoban_index(state, block_pos);
 
         // check bounds for the block
         if (block_pos.x < 0 || block_pos.x >= state.columns) return command;
         if (block_pos.y < 0 || block_pos.y >= state.rows) return command;
 
         // make sure spot is not a block or a solid
-        if (sokoban_is_block(state, block_pos) || sokoban_is_solid(state, block_pos)) return command;
+        if (state.blocks[block_pos_index] || state.solids[block_pos_index])
+            return command;
 
         // update block position
-        sokoban_set_block(state, block_pos);
-        sokoban_clear_block(state, player_pos);
+        state.blocks.set(block_pos_index);
+        state.blocks.reset(player_pos_index);
         state.player = player_pos;
 
         command.moved_block = true;
@@ -143,7 +145,10 @@ void sokoban_undo(Sokoban& state, const Command& command) {
     sokoban_update(state, undo_direction);
 
     if (command.moved_block) {
-        sokoban_set_block(state, original_player_position);
-        sokoban_clear_block(state, point_add(original_player_position, command.player_direction));
+        state.blocks.set(sokoban_index(state, original_player_position));
+        state.blocks.reset(sokoban_index(state, point_add(
+            original_player_position,
+            command.player_direction
+        )));
     }
 }
