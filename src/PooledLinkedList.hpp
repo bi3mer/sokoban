@@ -11,7 +11,7 @@ struct PoolNode {
     T data;
 
     PoolNode<T>() : previous(nullptr), next(nullptr) {}
-    PoolNode<T>(T value) : previous(nullptr), next(nullptr), data(value) {}
+    PoolNode<T>(const T value) : previous(nullptr), next(nullptr), data(value) {}
 };
 
 template<typename T>
@@ -44,7 +44,7 @@ struct PooledLinkedList {
         back = nullptr;
     }
 
-    void push_front(T data) {
+    void push_front(const T data) {
         ++size;
 
         PoolNode<T>* new_node = pool.get_object();
@@ -63,7 +63,7 @@ struct PooledLinkedList {
         }
     }
 
-    void push_back(T data) {
+    void push_back(const T data) {
         ++size;
 
         PoolNode<T>* new_node = pool.get_object();

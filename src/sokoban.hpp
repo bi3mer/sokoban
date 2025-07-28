@@ -14,7 +14,6 @@ struct Sokoban {
     Point player = { 0, 0 };
     Point original_player;
 
-    // divide by 8 because there are 8 bits in one unsigned char
     std::bitset<LEVEL_LENGTH> original_blocks;
     std::bitset<LEVEL_LENGTH> blocks;
     std::bitset<LEVEL_LENGTH> solids;

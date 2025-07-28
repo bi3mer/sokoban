@@ -88,7 +88,7 @@ bool sokoban_game_over(const Sokoban& state) {
 }
 
 void sokoban_restart(Sokoban& state) {
-    state.original_blocks = state.blocks;
+    state.blocks = state.original_blocks;
     state.player = state.original_player;
 }
 
