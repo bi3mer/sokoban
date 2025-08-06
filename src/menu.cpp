@@ -5,7 +5,6 @@
 #include "ncurses.h"
 #include <cstddef>
 #include <cstdlib>
-#include <format>
 
 const std::size_t MENU_SIZE = 3;
 const char* MENU_OPTIONS[MENU_SIZE] = {
@@ -26,26 +25,20 @@ State* Menu::update() {
     switch (getch()) {
         CASE_SELECT_KEYS
             switch(user_selection) {
-                case 0:
-                    Log::info("menu :: goto level progression");
-                    return level_progression;
-                case 1:
-                    Log::info("menu :: goto instructions");
-                    return instructions;
-                case 2:
-                    Log::info("menu :: player exiting");
-                    app_state->running = false;
-                    break;
-                default:
-                    Log::warn(
-                        std::format(
-                            "invalid menu selection index: {}",
-                            user_selection
-                        ).c_str()
-                    );
-
-                    user_selection = 0;
-                    break;
+            case 0:
+                Log::info("menu :: goto level progression");
+                return level_progression;
+            case 1:
+                Log::info("menu :: goto instructions");
+                return instructions;
+            case 2:
+                Log::info("menu :: player exiting");
+                app_state->running = false;
+                break;
+            default:
+                Log::warning("invalid menu selection index: {}", user_selection);
+                user_selection = 0;
+                break;
             }
             break;
         CASE_UP_KEYS

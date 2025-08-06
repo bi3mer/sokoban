@@ -11,7 +11,7 @@ ApplicationState::ApplicationState() {
     std::ifstream in_file(SAVE_FILE);
 
     if (!in_file) {
-        Log::err("could not open SAVE_FILE, resetting.");
+        Log::error("Could not open SAVE_FILE, resetting.");
         return;
     }
 
@@ -26,7 +26,7 @@ ApplicationState::ApplicationState() {
 
         try {
             ld.moves = std::stoi(line.substr(0, comma_index));
-            Log::debug(std::format("app-state :: load moves={}", ld.moves).c_str());
+            Log::debug("app-state :: load moves = {}", ld.moves);
         } catch (std::exception e) {
             Log::debug(line.substr(0, comma_index).c_str());
             Log::fatal("corrupted save file for moves. Please remove and restart.");
@@ -34,7 +34,7 @@ ApplicationState::ApplicationState() {
 
         try {
             ld.seconds_played= std::stod(line.substr(comma_index+1, line.length() - comma_index - 1));
-            Log::debug(std::format("app-state :: load seconds_played={}", ld.seconds_played).c_str());
+            Log::debug("app-state :: load seconds_played={}", ld.seconds_played);
         } catch (std::exception e) {
             Log::debug(line.substr(comma_index+1, line.length() - comma_index).c_str());
             Log::fatal("corrupted save file for seconds_played. Please remove and restart.");
@@ -54,7 +54,7 @@ void ApplicationState::save() {
     std::ofstream out_file(SAVE_FILE);
 
     if (!out_file) {
-        Log::err("Could not write to SAVE_DATA.");
+        Log::error("Could not write to SAVE_DATA.");
         return;
     }
 

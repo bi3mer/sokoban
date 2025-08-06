@@ -68,11 +68,9 @@ State* LevelProgression::update() {
         CASE_SELECT_KEYS {
             if (app_state->selected_index > app_state->level_data.size()) {
                 Log::info(
-                    std::format(
-                        "level progression :: Locked level selection: {} > {}",
-                        app_state->selected_index,
-                        app_state->level_data.size()
-                    ).c_str()
+                    "level progression :: Locked level selection: {} > {}",
+                    app_state->selected_index,
+                    app_state->level_data.size()
                 );
 
                 break;

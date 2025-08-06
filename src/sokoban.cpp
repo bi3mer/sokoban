@@ -8,12 +8,9 @@
 #include <cstddef>
 #include <cstring>
 #include <fstream>
-#include <iterator>
 
 bool sokoban_init_from_level(Sokoban& state, char const * const level_path) {
-    Log::info(
-        std::format("sokoban :: loading level: {}",level_path).c_str()
-    );
+    Log::info("sokoban :: loading level: {}", level_path);
 
     state.columns = 0;
 
@@ -59,14 +56,12 @@ bool sokoban_init_from_level(Sokoban& state, char const * const level_path) {
             p.x = 0;
             break;
         default:
-            Log::err(std::format("Unnknown tile type: {}", byte).c_str());
+            Log::error("Unnknown tile type: {}", byte);
             return true;
         }
 
         if (p.x >= LEVEL_MAX_WIDTH || p.y >= LEVEL_MAX_HEIGHT) {
-            Log::err(std::format(
-                "{}: width={}, height={} -> limit exceeded.", level_path, p.x, p.y).c_str()
-            );
+            Log::error("{}: width={}, height={} -> limit exceeded.", level_path, p.x, p.y);
 
             file.close();
             return true;

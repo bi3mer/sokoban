@@ -28,11 +28,9 @@ struct ObjectPool {
 
     T* get_object() {
         if (pool.empty()) {
-            Log::debug("pool :: alloc");
             return new T();
         }
 
-        Log::debug("pool :: get");
         T* object = pool.back();
         pool.pop_back();
 

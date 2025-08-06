@@ -77,12 +77,7 @@ State* Game::update() {
         const double seconds_played = std::ceil(ms_played * 0.001 * 100.0) / 100.0;
 
         if (app_state->selected_index == app_state->level_data.size()) {
-            Log::info(
-               std::format(
-                   "game :: unlocked level: {}",
-                   app_state->level_data.size()
-               ).c_str()
-            );
+            Log::info("game :: unlocked level: {}", app_state->level_data.size());
 
             app_state->level_data.push_back({
                 .moves = app_state->moves,
@@ -111,8 +106,8 @@ State* Game::update() {
             }
 
 
-            Log::info(std::format("game :: moves={}", ld.moves).c_str());
-            Log::info(std::format("game :: seconds_played={}", ld.seconds_played).c_str());
+            Log::info("game :: moves={}", ld.moves);
+            Log::info("game :: seconds_played={}", ld.seconds_played);
         }
 
         app_state->save(); // auto-save
