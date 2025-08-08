@@ -21,3 +21,38 @@ After the game is succesfully built, you can run the game with:
 ## Other
 
 Usually, I code a game and I have a repo to document the progress, and that is it. For this project, I went in a different direction and recorded myself while programming the whole thing. You can find the whole series on [YouTube.](https://www.youtube.com/watch?v=1qzPr5OpPOE&list=PLwaZncztKsRckZ0u3sKbwkZMtH1-ABkDR)
+
+
+## Ring Buffer Test Code
+
+```c++
+#include <cassert>
+
+#include "ring_buffer.hpp"
+
+int main() {
+    RingBuffer<float, 1> rb1;
+
+    assert(rb1.index == 0);
+
+    rb1.push(32.f);
+    assert(rb1.index == 0);
+    assert(rb1[0] == 32.f);
+
+    rb1.push(-1.1f);
+    assert(rb1.index == 0);
+    assert(rb1[0] == -1.1f);
+
+    RingBuffer<int, 10> rb2;
+    for(int i = 0; i < 10; ++i) {
+        rb2.push(i);
+
+        assert(rb2.index == (i+1) % 10);
+        assert(rb2[i] == i);
+    }
+
+    rb2.push(10);
+    assert(rb2.index == 1);
+    assert(rb2[0] == 10);
+}
+```

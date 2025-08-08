@@ -27,19 +27,19 @@ State* Game::update() {
     switch (getch()) {
         CASE_UP_KEYS
             ++app_state->moves;
-            commands.push_back(sokoban_update(app_state->game_state, {0, -1}));
+            commands.push(sokoban_update(app_state->game_state, {0, -1}));
             break;
         CASE_LEFT_KEYS
             ++app_state->moves;
-            commands.push_back(sokoban_update(app_state->game_state, {-1, 0}));
+            commands.push(sokoban_update(app_state->game_state, {-1, 0}));
             break;
         CASE_DOWN_KEYS
             ++app_state->moves;
-            commands.push_back(sokoban_update(app_state->game_state, {0, 1}));
+            commands.push(sokoban_update(app_state->game_state, {0, 1}));
             break;
         CASE_RIGHT_KEYS
             ++app_state->moves;
-            commands.push_back(sokoban_update(app_state->game_state, {1, 0}));
+            commands.push(sokoban_update(app_state->game_state, {1, 0}));
             break;
         case 'R':
         case 'r':
@@ -50,10 +50,12 @@ State* Game::update() {
             break;
         case 'U':
         case 'u':
-            if (commands.size > 0) {
+            // @BUG: this is the bug
+            if (commands.last_valid_index != commands.index) {
                 app_state->moves = std::max(app_state->moves-1, 0);
-                sokoban_undo(app_state->game_state, commands.pop_back());
+                sokoban_undo(app_state->game_state, commands.pop());
             }
+
             break;
         CASE_Q_KEYS
             Log::info("game :: player quit");
@@ -63,10 +65,11 @@ State* Game::update() {
             break;
     }
 
-    if (commands.size >= MAX_COMMANDS) {
-        Log::info("game :: reached max commands, popping oldest command.");
-        commands.pop_front();
-    }
+    // @NOTE: linked list approach
+    // if (commands.size >= MAX_COMMANDS) {
+    //     Log::info("game :: reached max commands, popping oldest command.");
+    //     commands.pop_front();
+    // }
 
     if (sokoban_game_over(app_state->game_state)) {
         Log::info("game :: player won");
