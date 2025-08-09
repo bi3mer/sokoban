@@ -1,8 +1,6 @@
-#include "log.hpp"
 #include <cassert>
 #include <cstddef>
 #include <cstdlib>
-#include <iterator>
 
 template <typename T, std::size_t size>
 struct RingBuffer {
@@ -11,7 +9,7 @@ struct RingBuffer {
     std::size_t back;
     std::size_t front;
     std::size_t count;
-    T ring_buffer[size];
+    T list[size];
 
     RingBuffer() : back(0), front(0), count(0) {}
 
@@ -31,12 +29,12 @@ struct RingBuffer {
 
     T operator[](std::size_t i) noexcept {
         assert(i < count);
-        return ring_buffer[(front + i) % size];
+        return list[(front + i) % size];
     }
 
     const T& operator[](std::size_t i) const noexcept {
         assert(i < count);
-        return ring_buffer[(front + i) % size];
+        return list[(front + i) % size];
     }
 
     // @TODO: implement this
@@ -44,8 +42,16 @@ struct RingBuffer {
         std::abort();
     }
 
+    T get_back() noexcept {
+        return list[(back - 1) % size];
+    }
+
+    const T& get_back() const noexcept {
+        return list[(back - 1) % size];
+    }
+
     void push_back(const T& data) noexcept {
-        ring_buffer[back] = data;
+        list[back] = data;
         back = (back + 1) % size;
 
         if (count < size) {
@@ -60,7 +66,7 @@ struct RingBuffer {
         back = (back - 1) % size;
         --count;
 
-        return ring_buffer[back];
+        return list[back];
     }
 
     T pop_front() noexcept {
@@ -70,6 +76,6 @@ struct RingBuffer {
         front = (front + 1) % size;
         --count;
 
-        return ring_buffer[index];
+        return list[index];
     }
 };

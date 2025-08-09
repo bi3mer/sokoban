@@ -6,6 +6,7 @@
 #include "log.hpp"
 
 #include <algorithm>
+#include <cassert>
 #include <chrono>
 #include <ncurses.h>
 #include <print>
@@ -15,7 +16,7 @@ void Game::on_enter() {
     Log::info("Game :: on_enter");
     app_state->moves = 0;
     app_state->start_time = std::chrono::steady_clock::now();
-    // commands.clear();
+    commands.clear();
 }
 
 void Game::on_exit() {
@@ -62,11 +63,6 @@ State* Game::update() {
             return level_progression;
         default:
             break;
-    }
-
-    if (commands.count >= MAX_COMMANDS) {
-        Log::info("game :: reached max commands, popping oldest command.");
-        commands.pop_front();
     }
 
     if (sokoban_game_over(app_state->game_state)) {

@@ -3,6 +3,10 @@
 struct Point {
     int x;
     int y;
+
+    inline bool equals(const Point& other) const noexcept {
+        return x == other.x && y == other.y;
+    }
 };
 
 inline Point point_add(const Point p1, const Point p2) {

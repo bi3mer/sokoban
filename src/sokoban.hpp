@@ -21,7 +21,7 @@ struct Sokoban {
 };
 
 inline std::size_t sokoban_index(const Sokoban& state, Point p) {
-    return static_cast<std::size_t>(p.y) * state.columns + static_cast<std::size_t>(p.x);
+    return static_cast<std::size_t>(p.y) * LEVEL_MAX_WIDTH + static_cast<std::size_t>(p.x);
 }
 
 bool sokoban_init_from_level(Sokoban&, char const * const);

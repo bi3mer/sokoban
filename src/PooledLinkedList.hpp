@@ -16,20 +16,20 @@ struct PoolNode {
 
 template<typename T>
 struct PooledLinkedList {
-    std::size_t size;
+    std::size_t count;
     PoolNode<T>* front;
     PoolNode<T>* back;
     ObjectPool<PoolNode<T>> pool;
 
-    PooledLinkedList<T>() : size(0), front(nullptr), back(nullptr) {}
-    PooledLinkedList<T>(std::size_t pool_size) : size(0), front(nullptr), back(nullptr), pool(pool_size) {}
+    PooledLinkedList<T>() : count(0), front(nullptr), back(nullptr) {}
+    PooledLinkedList<T>(std::size_t pool_size) : count(0), front(nullptr), back(nullptr), pool(pool_size) {}
 
     ~PooledLinkedList<T>() {
         clear();
     }
 
     void clear() {
-        size = 0;
+        count = 0;
 
         while (front != nullptr) {
             PoolNode<T>* object = front;
@@ -45,7 +45,7 @@ struct PooledLinkedList {
     }
 
     void push_front(const T data) {
-        ++size;
+        ++count;
 
         PoolNode<T>* new_node = pool.get_object();
         new_node->data = data;
@@ -64,7 +64,7 @@ struct PooledLinkedList {
     }
 
     void push_back(const T data) {
-        ++size;
+        ++count;
 
         PoolNode<T>* new_node = pool.get_object();
         new_node->data = data;
@@ -85,7 +85,7 @@ struct PooledLinkedList {
     void remove_front() {
         if (front == nullptr) return;
 
-        --size;
+        --count;
         PoolNode<T>* object = front;
         front = front->next;
         front->previous = nullptr;
@@ -96,7 +96,7 @@ struct PooledLinkedList {
     void remove_back() {
         if (back == nullptr) return;
 
-        --size;
+        --count;
         PoolNode<T>* object = back;
         back = back->previous;
         back->next = nullptr;
@@ -108,7 +108,7 @@ struct PooledLinkedList {
         assert(front != nullptr);
 
         T data = front->data;
-        --size;
+        --count;
 
         if (front == back) {
             pool.return_object(front);
@@ -130,7 +130,7 @@ struct PooledLinkedList {
         assert(back != nullptr);
 
         T data = back->data;
-        --size;
+        --count;
 
         if (front == back) {
             pool.return_object(back);
@@ -146,5 +146,26 @@ struct PooledLinkedList {
         }
 
         return data;
+    }
+
+    T get_back() noexcept {
+        assert(back != nullptr);
+        return back->data;
+    }
+
+    const T& get_back() const noexcept {
+        assert(back != nullptr);
+        return back->data;
+    }
+
+
+    T get_front() noexcept {
+        assert(front != nullptr);
+        return front->data;
+    }
+
+    const T& get_front() const noexcept {
+        assert(front != nullptr);
+        return front->data;
     }
 };
