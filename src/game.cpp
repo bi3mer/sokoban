@@ -7,14 +7,15 @@
 
 #include <algorithm>
 #include <chrono>
-#include <format>
 #include <ncurses.h>
+#include <print>
 #include <utility>
 
 void Game::on_enter() {
     Log::info("Game :: on_enter");
     app_state->moves = 0;
     app_state->start_time = std::chrono::steady_clock::now();
+    // commands.clear();
 }
 
 void Game::on_exit() {
@@ -27,19 +28,19 @@ State* Game::update() {
     switch (getch()) {
         CASE_UP_KEYS
             ++app_state->moves;
-            commands.push(sokoban_update(app_state->game_state, {0, -1}));
+            commands.push_back(sokoban_update(app_state->game_state, {0, -1}));
             break;
         CASE_LEFT_KEYS
             ++app_state->moves;
-            commands.push(sokoban_update(app_state->game_state, {-1, 0}));
+            commands.push_back(sokoban_update(app_state->game_state, {-1, 0}));
             break;
         CASE_DOWN_KEYS
             ++app_state->moves;
-            commands.push(sokoban_update(app_state->game_state, {0, 1}));
+            commands.push_back(sokoban_update(app_state->game_state, {0, 1}));
             break;
         CASE_RIGHT_KEYS
             ++app_state->moves;
-            commands.push(sokoban_update(app_state->game_state, {1, 0}));
+            commands.push_back(sokoban_update(app_state->game_state, {1, 0}));
             break;
         case 'R':
         case 'r':
@@ -50,12 +51,10 @@ State* Game::update() {
             break;
         case 'U':
         case 'u':
-            // @BUG: this is the bug
-            if (commands.last_valid_index != commands.index) {
+            if (commands.count > 0) {
                 app_state->moves = std::max(app_state->moves-1, 0);
-                sokoban_undo(app_state->game_state, commands.pop());
+                sokoban_undo(app_state->game_state, commands.pop_back());
             }
-
             break;
         CASE_Q_KEYS
             Log::info("game :: player quit");
@@ -65,11 +64,10 @@ State* Game::update() {
             break;
     }
 
-    // @NOTE: linked list approach
-    // if (commands.size >= MAX_COMMANDS) {
-    //     Log::info("game :: reached max commands, popping oldest command.");
-    //     commands.pop_front();
-    // }
+    if (commands.count >= MAX_COMMANDS) {
+        Log::info("game :: reached max commands, popping oldest command.");
+        commands.pop_front();
+    }
 
     if (sokoban_game_over(app_state->game_state)) {
         Log::info("game :: player won");

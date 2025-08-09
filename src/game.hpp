@@ -12,7 +12,7 @@ struct Game : State {
     // PooledLinkedList<Command> commands;
     RingBuffer<Command, MAX_COMMANDS> commands;
 
-    Game(ApplicationState* state) : State(state), commands(MAX_COMMANDS) {};
+    Game(ApplicationState* state) : State(state), commands() {};
 
     void on_enter() override;
     void on_exit() override;
